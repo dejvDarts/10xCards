@@ -4,7 +4,10 @@ plan_for: First production deployment — Cloudflare Workers + Pages
 derived_from: context/foundation/infrastructure.md
 repository: dejvDarts/10xCards
 created_at: 2026-08-24
-status: draft — awaiting human approval before any production mutation
+status: deployed — live on Cloudflare Workers (CI auto-deploy on master)
+deployed_url: https://10x-cards.dawid-kwiatkowski.workers.dev
+deployed_version_id: ec359bc0-042c-4cb2-82ba-4f58245d4db3
+deployed_at: 2026-08-26
 tech_stack:
   framework: Astro 6 (SSR, output "server") + React 19 islands
   adapter: "@astrojs/cloudflare ^13.5.0 (build verified green with Astro 6)"
@@ -39,9 +42,9 @@ made (`infrastructure.md`); this plan covers **how** we ship, not **where**.
 | 3 | First manual deploy (staging-style) 🔒 | human-approved | `[x]` |
 | 4 | Runtime secrets & external integrations 🌐🔒 | human | `[~]` |
 | 5 | Smoke tests & verification 🌐 | agent | `[x]` |
-| 6 | CI/CD auto-deploy | agent + human | `[~]` |
-| 7 | Rollback & operational runbook | agent | `[ ]` |
-| 8 | Post-deploy hardening & sign-off | human | `[ ]` |
+| 6 | CI/CD auto-deploy | agent + human | `[x]` |
+| 7 | Rollback & operational runbook | agent | `[x]` |
+| 8 | Post-deploy hardening & sign-off | human | `[x]` |
 
 ---
 
@@ -318,9 +321,10 @@ Current `.github/workflows/ci.yml` runs `npm ci → astro sync → lint → buil
               #   SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
               #   SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
       ```
-- [ ] ⚠️🌐 Verify the GitHub Secrets → `wrangler deploy` mapping actually works with a
+- [x] ⚠️🌐 Verify the GitHub Secrets → `wrangler deploy` mapping actually works with a
       throwaway commit and a smoke test (the "secrets not wired" risk in the register).
-      → see Edge case E7. **Pending: verified on next push to `master`** (job added to `ci.yml`).
+      → see Edge case E7. **Verified 2026-08-26**: push to `master` ran `ci` + `deploy`
+      (run 32905055249, both green); CI published version `ec359bc0-042c-4cb2-82ba-4f58245d4db3`.
 - [ ] ⚠️ Fork-PR preview limitation: PRs from forks cannot read repo secrets, so their
       preview builds have no Supabase/AI keys. Keep deploy on `push`-to-`master` only, or use
       trusted branches. → see Edge case E8.
@@ -329,29 +333,46 @@ Current `.github/workflows/ci.yml` runs `npm ci → astro sync → lint → buil
 
 ## Phase 7 — Rollback & operational runbook (agent)
 
-- [ ] Document the rollback path (verify commands exist for the installed wrangler 4.90):
+- [x] Document the rollback path (verify commands exist for the installed wrangler 4.90):
       - List versions: `npx wrangler versions list`
       - Roll back: `npx wrangler rollback [VERSION_ID]`
-- [ ] ⚠️ **Code rollback does NOT revert Supabase migrations.** DB migrations in
+      **Verified 2026-08-26** on wrangler 4.90: both commands present; `rollback` supports
+      `-m/--message` (reason) and `-y/--yes` (non-interactive). Current live version:
+      `ec359bc0-042c-4cb2-82ba-4f58245d4db3`.
+
+      **Runbook — rollback a bad prod deploy:**
+      1. `npx wrangler versions list` — find the last-known-good `Version ID`.
+      2. `npx wrangler rollback <GOOD_VERSION_ID> -m "reason"` (add `-y` to skip the prompt).
+      3. Confirm: `npx wrangler deployments list` shows the rolled-back version at 100%.
+      4. Re-run the Phase 5 smoke checks against the prod URL.
+      Note: CI auto-deploys `master`, so **also revert the offending commit** (`git revert`),
+      otherwise the next push re-deploys the broken version.
+- [x] ⚠️ **Code rollback does NOT revert Supabase migrations.** DB migrations in
       `supabase/migrations/` must be versioned and rolled back separately and deliberately.
       → see Edge case E9.
-- [ ] Document the read-only agent-safe commands (no approval needed):
-      `wrangler tail`, `wrangler versions list`, `wrangler secret list`, dry-run builds,
-      `gh run view` for CI logs.
-- [ ] Document human-only actions: production publish approval, primary-key rotation
-      (Supabase service key, AI keys), KV/DB destructive ops.
+- [x] Document the read-only agent-safe commands (no approval needed):
+      `wrangler tail`, `wrangler versions list`, `wrangler deployments list`,
+      `wrangler secret list`, `wrangler whoami`, dry-run/`npm run build`,
+      `gh run list` / `gh run view` for CI logs.
+- [x] Document human-only actions: production publish approval, primary-key rotation
+      (Supabase service key, AI keys), Cloudflare API-token rotation, KV/DB destructive ops
+      (`kv namespace delete`, `wrangler delete`, dropping Supabase tables), and running
+      `wrangler rollback` against prod.
 
 ---
 
 ## Phase 8 — Post-deploy hardening & sign-off (human)
 
-- [ ] 🔒 Confirm the API token is scoped (no DNS/Billing), and secrets live only in
+- [x] 🔒 Confirm the API token is scoped (no DNS/Billing), and secrets live only in
       Workers Secrets + GitHub Secrets (never committed).
-- [ ] Confirm `observability.enabled: true` (already set in `wrangler.jsonc`) surfaces logs
-      in the dashboard.
-- [ ] Update `infrastructure.md` / this file's frontmatter `status` → `deployed` with the
-      live URL and version ID.
-- [ ] 🔒 Final human sign-off.
+      **Confirmed by human 2026-08-26**: CI `CLOUDFLARE_API_TOKEN` reduced to least-privilege
+      scope; CI re-run still deployed successfully. Secrets only in Workers + GitHub Secrets.
+- [x] Confirm `observability.enabled: true` (already set in `wrangler.jsonc`) surfaces logs
+      in the dashboard. Verified present in `wrangler.jsonc` and logs seen via `wrangler tail`.
+- [x] Update `infrastructure.md` / this file's frontmatter `status` → `deployed` with the
+      live URL and version ID. Done: `status: deployed`, URL + version ID in frontmatter.
+- [x] 🔒 Final human sign-off. **Signed off 2026-08-26** — least-privilege token confirmed,
+      CI auto-deploy verified, new version live on Cloudflare.
 
 ---
 
