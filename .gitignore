@@ -32,3 +32,6 @@ pnpm-debug.log*
 .github/prompts/
 .agents/skills/
 skills-lock.json
+
+.dev.vars
+.env
