@@ -43,7 +43,7 @@ Professionals lose too much time creating high-quality learning flashcards by ha
 | ----- | --------------------------- | ----------------------------------------------------------- | ------------- | ---------------------- | -------- |
 | F-01 | private-flashcard-storage | (foundation) private flashcard storage is available to signed-in users | — | FR-001, FR-002, NFR: Prywatność danych | ready |
 | F-02 | choose-review-algorithm | (foundation) an existing review algorithm is selected for the learning session | — | FR-009 | blocked |
-| S-01 | reviewed-ai-flashcards | turn pasted text into reviewed, saved flashcards | F-01 | US-01, FR-003, FR-004 | proposed |
+| S-01 | reviewed-ai-flashcards | turn pasted text into reviewed, saved flashcards | F-01 | US-01, FR-003, FR-004 | planning |
 | S-02 | manual-flashcard-creation | create a flashcard manually | F-01 | FR-005 | proposed |
 | S-03 | personal-flashcard-list | browse their saved flashcards | S-01 | FR-006 | proposed |
 | S-04 | saved-flashcard-maintenance | edit or delete a saved flashcard | S-03 | FR-007, FR-008 | proposed |
@@ -111,7 +111,7 @@ What's already in place in the codebase as of `2026-09-02` (auto-researched + us
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** This first slice tests whether AI proposals save preparation time while preserving user control; poor proposal quality would weaken the product's central promise.
-- **Status:** proposed
+- **Status:** planning
 
 ### S-02: Manual flashcard creation
 
@@ -184,7 +184,7 @@ What's already in place in the codebase as of `2026-09-02` (auto-researched + us
 - **Import wielu formatów (PDF, DOCX itp.)** — Why parked: PRD §Non-Goals limits MVP input to pasted text.
 - **Współdzielenie zestawów fiszek między użytkownikami** — Why parked: PRD §Non-Goals defines a personal, isolated collection.
 - **Integracje z innymi platformami edukacyjnymi** — Why parked: PRD §Non-Goals excludes educational integrations.
-- **Aplikacje mobilne** — Why parked: PRD §Non-Goals specifies a web-first release.
+- **Apl specifies a web-first release.
 
 ## Milestone History
 
