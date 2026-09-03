@@ -1,5 +1,5 @@
 import { type SubmitEvent, useState } from "react";
-import { Check, LoaderCircle, Sparkles, X } from "lucide-react";
+import { Check, LoaderCircle, RefreshCw, Sparkles, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,8 +9,16 @@ const MIN_SOURCE_LENGTH = 100;
 const MAX_SOURCE_LENGTH = 10000;
 
 export default function FlashcardGenerator() {
-  const { editFlashcard, error, flashcards, generate, isGenerating, updateFlashcard, updatingCardId } =
-    useFlashcardProposals();
+  const {
+    canRetryGeneration,
+    editFlashcard,
+    error,
+    flashcards,
+    generate,
+    isGenerating,
+    updateFlashcard,
+    updatingCardId,
+  } = useFlashcardProposals();
   const [sourceText, setSourceText] = useState("");
   const sourceTextError =
     sourceText.length > 0 && sourceText.length < MIN_SOURCE_LENGTH
@@ -57,8 +65,25 @@ export default function FlashcardGenerator() {
       </form>
 
       {error && (
-        <div role="alert" className="border border-red-300/40 bg-red-950/40 px-4 py-3 text-sm text-red-100">
-          {error}
+        <div
+          role="alert"
+          className="flex flex-wrap items-center justify-between gap-3 border border-red-300/40 bg-red-950/40 px-4 py-3 text-sm text-red-100"
+        >
+          <span>{error}</span>
+          {canRetryGeneration && (
+            <Button
+              type="button"
+              variant="outline"
+              disabled={isGenerating}
+              onClick={() => {
+                void generate(sourceText);
+              }}
+              className="border-red-200/40 bg-transparent text-red-50 hover:bg-red-200/10 hover:text-white"
+            >
+              {isGenerating ? <LoaderCircle className="animate-spin" /> : <RefreshCw />}
+              Retry
+            </Button>
+          )}
         </div>
       )}
 

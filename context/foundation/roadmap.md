@@ -39,25 +39,25 @@ Professionals lose too much time creating high-quality learning flashcards by ha
 
 ## At a glance
 
-| ID | Change ID | Outcome (user can ...) | Prerequisites | PRD refs | Status |
-| ----- | --------------------------- | ----------------------------------------------------------- | ------------- | ---------------------- | -------- |
-| F-01 | private-flashcard-storage | (foundation) private flashcard storage is available to signed-in users | — | FR-001, FR-002, NFR: Prywatność danych | ready |
-| F-02 | choose-review-algorithm | (foundation) an existing review algorithm is selected for the learning session | — | FR-009 | blocked |
-| S-01 | reviewed-ai-flashcards | turn pasted text into reviewed, saved flashcards | F-01 | US-01, FR-003, FR-004 | in-progress |
-| S-02 | manual-flashcard-creation | create a flashcard manually | F-01 | FR-005 | proposed |
-| S-03 | personal-flashcard-list | browse their saved flashcards | S-01 | FR-006 | proposed |
-| S-04 | saved-flashcard-maintenance | edit or delete a saved flashcard | S-03 | FR-007, FR-008 | proposed |
-| S-05 | spaced-repetition-session | study saved flashcards in a review session | S-01, F-02 | FR-009 | blocked |
+| ID   | Change ID                   | Outcome (user can ...)                                                         | Prerequisites | PRD refs                               | Status   |
+| ---- | --------------------------- | ------------------------------------------------------------------------------ | ------------- | -------------------------------------- | -------- |
+| F-01 | private-flashcard-storage   | (foundation) private flashcard storage is available to signed-in users         | —             | FR-001, FR-002, NFR: Prywatność danych | done     |
+| F-02 | choose-review-algorithm     | (foundation) an existing review algorithm is selected for the learning session | —             | FR-009                                 | blocked  |
+| S-01 | reviewed-ai-flashcards      | turn pasted text into reviewed, saved flashcards                               | F-01          | US-01, FR-003, FR-004                  | done     |
+| S-02 | manual-flashcard-creation   | create a flashcard manually                                                    | F-01          | FR-005                                 | proposed |
+| S-03 | personal-flashcard-list     | browse their saved flashcards                                                  | S-01          | FR-006                                 | proposed |
+| S-04 | saved-flashcard-maintenance | edit or delete a saved flashcard                                               | S-03          | FR-007, FR-008                         | proposed |
+| S-05 | spaced-repetition-session   | study saved flashcards in a review session                                     | S-01, F-02    | FR-009                                 | blocked  |
 
 ## Streams
 
 Navigation aid — groups items that share a Prerequisites chain. Canonical ordering still lives in the dependency graph below; this table is the proposed reading order across parallel tracks.
 
-| Stream | Theme | Chain | Note |
-| ------ | ------------------------- | -------------------------------- | -------------------------------------------------------- |
-| A | AI-assisted learning loop | `F-01` → `S-01` → `S-03` → `S-04` → `S-05` | S-05 joins Stream C through F-02 after the core flow is available. |
-| B | Manual collection entry | `S-02` | Shares F-01 and can proceed independently after the storage contract lands. |
-| C | Learning-session decision | `F-02` | Resolves the prerequisite for S-05 without building a bespoke algorithm. |
+| Stream | Theme                     | Chain                                      | Note                                                                        |
+| ------ | ------------------------- | ------------------------------------------ | --------------------------------------------------------------------------- |
+| A      | AI-assisted learning loop | `F-01` → `S-01` → `S-03` → `S-04` → `S-05` | S-05 joins Stream C through F-02 after the core flow is available.          |
+| B      | Manual collection entry   | `S-02`                                     | Shares F-01 and can proceed independently after the storage contract lands. |
+| C      | Learning-session decision | `F-02`                                     | Resolves the prerequisite for S-05 without building a bespoke algorithm.    |
 
 ## Baseline
 
@@ -83,7 +83,7 @@ What's already in place in the codebase as of `2026-09-02` (auto-researched + us
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Both creation paths need the same private collection boundary; adding only this shared contract avoids duplicating it while leaving user-facing behavior to the slices.
-- **Status:** ready
+- **Status:** done
 
 ### F-02: Choose review algorithm
 
@@ -111,7 +111,7 @@ What's already in place in the codebase as of `2026-09-02` (auto-researched + us
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** This first slice tests whether AI proposals save preparation time while preserving user control; poor proposal quality would weaken the product's central promise.
-- **Status:** in-progress
+- **Status:** done
 
 ### S-02: Manual flashcard creation
 
@@ -164,15 +164,15 @@ What's already in place in the codebase as of `2026-09-02` (auto-researched + us
 
 ## Backlog Handoff
 
-| Roadmap ID | Change ID | Suggested issue title | Ready for `/10x-plan` | Notes |
-| ---------- | --------------------------- | ---------------------------------------- | --------------------- | ----------------------------------------------- |
-| F-01 | private-flashcard-storage | Establish private flashcard storage | yes | Run `/10x-plan private-flashcard-storage` |
-| F-02 | choose-review-algorithm | Select the review algorithm | no | Resolve Open Roadmap Question 1 |
-| S-01 | reviewed-ai-flashcards | Let users review AI-generated flashcards | no | Requires F-01 |
-| S-02 | manual-flashcard-creation | Let users create flashcards manually | no | Requires F-01 |
-| S-03 | personal-flashcard-list | Let users browse personal flashcards | no | Requires S-01 |
-| S-04 | saved-flashcard-maintenance | Let users maintain saved flashcards | no | Requires S-03 |
-| S-05 | spaced-repetition-session | Let users study in review sessions | no | Requires S-01 and F-02 |
+| Roadmap ID | Change ID                   | Suggested issue title                    | Ready for `/10x-plan` | Notes                           |
+| ---------- | --------------------------- | ---------------------------------------- | --------------------- | ------------------------------- |
+| F-01       | private-flashcard-storage   | Establish private flashcard storage      | no                    | Completed within S-01 Phase 1   |
+| F-02       | choose-review-algorithm     | Select the review algorithm              | no                    | Resolve Open Roadmap Question 1 |
+| S-01       | reviewed-ai-flashcards      | Let users review AI-generated flashcards | no                    | Completed 2026-09-03            |
+| S-02       | manual-flashcard-creation   | Let users create flashcards manually     | no                    | Requires F-01                   |
+| S-03       | personal-flashcard-list     | Let users browse personal flashcards     | no                    | Requires S-01                   |
+| S-04       | saved-flashcard-maintenance | Let users maintain saved flashcards      | no                    | Requires S-03                   |
+| S-05       | spaced-repetition-session   | Let users study in review sessions       | no                    | Requires S-01 and F-02          |
 
 ## Open Roadmap Questions
 
@@ -189,3 +189,6 @@ What's already in place in the codebase as of `2026-09-02` (auto-researched + us
 ## Milestone History
 
 ## Done
+
+- **2026-09-03 — F-01 / private-flashcard-storage:** delivered as Phase 1 of S-01 with per-user RLS.
+- **2026-09-03 — S-01 / reviewed-ai-flashcards:** paste, generate, review, edit, accept/reject, and private persistence verified end-to-end. Spaced-repetition availability remains in S-05.

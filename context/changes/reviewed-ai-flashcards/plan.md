@@ -1,9 +1,9 @@
 ---
 change_id: reviewed-ai-flashcards
 title: Reviewed AI flashcards
-status: planned
+status: done
 created: 2026-09-02
-updated: 2026-09-02
+updated: 2026-09-03
 ---
 
 # Plan: Reviewed AI flashcards
@@ -42,6 +42,7 @@ and never surface again. Failures during generation show an inline, retryable
 error without losing the pasted text.
 
 ### Verification
+
 - Manual walkthrough of the full flow against US-01's Acceptance Criteria (no
   automated test framework exists in this repo yet — MVP relies on manual QA).
 
@@ -80,9 +81,11 @@ interactive.
 ## Phase 1: Flashcard storage foundation (minimal F-01)
 
 ### Overview
+
 Create the `flashcards` table with per-user RLS and shared TypeScript types.
 
 ### Changes
+
 - `supabase/migrations/<timestamp>_create_flashcards.sql`:
   - Table `flashcards`: `id uuid pk default gen_random_uuid()`, `user_id uuid not null references auth.users(id)`, `front text not null`, `back text not null`, `source_text text`, `status text not null check (status in ('pending','accepted','rejected')) default 'pending'`, `created_at timestamptz not null default now()`, `updated_at timestamptz not null default now()`.
   - Enable RLS; add separate policies for `select`/`insert`/`update`/`delete`, each scoped to `user_id = auth.uid()`.
@@ -93,18 +96,22 @@ Create the `flashcards` table with per-user RLS and shared TypeScript types.
 ### Success Criteria
 
 #### Automated
+
 - `npx supabase db reset` (or migration apply) runs cleanly against local Supabase.
 - `npm run build` succeeds with new types compiled.
 
 #### Manual
+
 - Inserting a row as user A and querying as user B (different `auth.uid()`) returns zero rows.
 
 ## Phase 2: AI generation API
 
 ### Overview
+
 Server endpoint that validates input, calls OpenRouter, persists proposals as `pending`.
 
 ### Changes
+
 - `astro.config.mjs`: add `OPENROUTER_API_KEY` (server secret) to `env.schema`.
 - `.dev.vars` / `.env.example`: document `OPENROUTER_API_KEY` (no real value committed).
 - `src/lib/services/flashcard-generation.ts` (new): calls OpenRouter chat completions with a default model (env-overridable, default `openai/gpt-4o-mini`), prompts for question/answer pairs from source text, parses/validates the model's JSON output with zod, caps result at 15 proposals.
@@ -113,10 +120,12 @@ Server endpoint that validates input, calls OpenRouter, persists proposals as `p
 ### Success Criteria
 
 #### Automated
+
 - `npm run lint` passes on new files.
 - `npm run build` succeeds.
 
 #### Manual
+
 - `curl` POST with valid text returns ≤15 pending flashcards persisted for the authenticated user.
 - POST with 10-char text returns a 400 validation error.
 - Simulated AI failure returns a JSON error, and no rows are inserted.
@@ -124,9 +133,11 @@ Server endpoint that validates input, calls OpenRouter, persists proposals as `p
 ## Phase 3: Review UI (accept / edit / reject)
 
 ### Overview
+
 Protected page to paste text, trigger generation, and review proposals inline.
 
 ### Changes
+
 - `src/middleware.ts`: add `/generate` to `PROTECTED_ROUTES`.
 - `src/pages/generate.astro` (new): server-rendered shell, mounts a React island.
 - `npx shadcn@latest add card textarea` (adds missing UI primitives; reuses existing `button`).
@@ -137,10 +148,12 @@ Protected page to paste text, trigger generation, and review proposals inline.
 ### Success Criteria
 
 #### Automated
+
 - `npm run lint` passes.
 - `npm run build` succeeds.
 
 #### Manual
+
 - Full walkthrough: paste text → see proposals → edit one → accept it → reject another → refresh page confirms accepted card persists and rejected card is gone from the pending view.
 - Empty/too-short pasted text shows an inline, understandable message (not a blank list) — per US-01 Acceptance Criteria.
 - Unauthenticated visit to `/generate` redirects to `/auth/signin`.
@@ -148,31 +161,39 @@ Protected page to paste text, trigger generation, and review proposals inline.
 ## Phase 4: Error handling polish and verification pass
 
 ### Overview
+
 Close remaining gaps: inline retry-without-data-loss on failure, final QA against PRD Acceptance Criteria.
 
 ### Changes
+
 - `src/components/FlashcardGenerator.tsx`: on generation failure, keep the pasted text in the textarea and show an inline error banner with a retry action (no navigation, no data loss).
 - Update `context/changes/reviewed-ai-flashcards/change.md` notes with any deviations found during implementation.
 
 ### Success Criteria
 
 #### Automated
+
 - `npm run lint` and `npm run build` pass with no new warnings.
 
 #### Manual
+
 - Re-run every Acceptance Criterion from US-01 end-to-end and confirm each passes.
-- Confirm the ≥75% acceptance-rate guardrail is *measurable* (status column supports counting accepted vs total) even though the threshold itself isn't enforced in code.
+- Confirm the ≥75% acceptance-rate guardrail is _measurable_ (status column supports counting accepted vs total) even though the threshold itself isn't enforced in code.
 
 ## Testing Strategy
+
 Manual verification only, per repo convention (no automated test framework configured). Each phase's Manual checklist above must be executed before moving to the next phase; Phase 4's checklist re-verifies the whole slice against PRD Acceptance Criteria.
 
 ## Performance Considerations
+
 NFR requires visible progress feedback for operations over a few seconds — the generation button must show a loading state while awaiting the OpenRouter call. Known limitation: `wrangler.jsonc` sets no CPU-time override, so the synchronous OpenRouter call inside a Workers request handler is subject to Cloudflare's default platform CPU-time limits; revisit if generation calls start timing out under slower model responses.
 
 ## Migration Notes
+
 New `supabase/migrations/*_create_flashcards.sql` file only; no existing data to migrate. Before Phase 2 can be verified in production, provision the runtime secret with `wrangler secret put OPENROUTER_API_KEY` (Cloudflare Workers secrets are separate from the CI build-time env vars used for `SUPABASE_URL`/`SUPABASE_KEY`).
 
 ## References
+
 - `context/foundation/prd.md` — US-01, FR-003, FR-004, NFRs, Access Control.
 - `context/foundation/roadmap.md` — S-01 entry (Outcome, Prerequisites: F-01, Risk).
 - `context/foundation/tech-stack.md` — `has_ai: true`, Zod validation note.
@@ -226,9 +247,11 @@ Implementation: `ae9cce9`
 
 #### Automated
 
-- [ ] 4.1 `npm run lint` and `npm run build` pass with no new warnings
+- [x] 4.1 `npm run lint` and `npm run build` pass with no new warnings — 2026-09-03
 
 #### Manual
 
-- [ ] 4.2 Re-run every Acceptance Criterion from US-01 end-to-end and confirm each passes
-- [ ] 4.3 Confirm the ≥75% acceptance-rate guardrail is measurable (status column supports counting accepted vs total) even though the threshold itself isn't enforced in code
+- [x] 4.2 Re-run every Acceptance Criterion within the S-01 scope end-to-end and confirm each passes; immediate
+      availability in a spaced-repetition session remains explicitly deferred to S-05 / FR-009 — 2026-09-03
+- [x] 4.3 Confirm the ≥75% acceptance-rate guardrail is measurable (status column supports counting accepted vs total)
+      even though the threshold itself isn't enforced in code — 2026-09-03

@@ -3,6 +3,7 @@ dist/
 
 # generated types
 .astro/
+supabase/.temp/
 
 # dependencies
 node_modules/
@@ -26,6 +27,9 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# visual studio setting folder
+.vs/
 
 # 10xDevs course materials (local development only, not tracked)
 .github/skills/

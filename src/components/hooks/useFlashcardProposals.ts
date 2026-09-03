@@ -17,11 +17,13 @@ async function readResponse<T>(response: Response): Promise<T> {
 export function useFlashcardProposals() {
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [canRetryGeneration, setCanRetryGeneration] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [updatingCardId, setUpdatingCardId] = useState<string | null>(null);
 
   async function generate(sourceText: string) {
     setError(null);
+    setCanRetryGeneration(false);
     setIsGenerating(true);
 
     try {
@@ -33,6 +35,7 @@ export function useFlashcardProposals() {
       const result = await readResponse<GenerateFlashcardsResponse>(response);
       setFlashcards(result.flashcards);
     } catch (requestError) {
+      setCanRetryGeneration(true);
       setError(requestError instanceof Error ? requestError.message : "Flashcard generation failed");
     } finally {
       setIsGenerating(false);
@@ -48,6 +51,7 @@ export function useFlashcardProposals() {
     if (cardIndex === -1) return;
 
     setError(null);
+    setCanRetryGeneration(false);
     setUpdatingCardId(card.id);
     setFlashcards((current) => current.filter((currentCard) => currentCard.id !== card.id));
 
@@ -66,5 +70,14 @@ export function useFlashcardProposals() {
     }
   }
 
-  return { editFlashcard, error, flashcards, generate, isGenerating, updateFlashcard, updatingCardId };
+  return {
+    canRetryGeneration,
+    editFlashcard,
+    error,
+    flashcards,
+    generate,
+    isGenerating,
+    updateFlashcard,
+    updatingCardId,
+  };
 }
