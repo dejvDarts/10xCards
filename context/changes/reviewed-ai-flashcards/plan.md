@@ -209,16 +209,18 @@ Implementation: `a339c5a`
 
 ### Phase 3: Review UI (accept / edit / reject)
 
+Implementation: `ae9cce9`
+
 #### Automated
 
-- [ ] 3.1 `npm run lint` passes
-- [ ] 3.2 `npm run build` succeeds
+- [x] 3.1 `npm run lint` passes — focused lint on Phase 3 files, 2026-09-03; repository-wide lint remains blocked by pre-existing CRLF/type errors
+- [x] 3.2 `npm run build` succeeds — 2026-09-03
 
 #### Manual
 
-- [ ] 3.3 Full walkthrough: paste text → see proposals → edit one → accept it → reject another → refresh page confirms accepted card persists and rejected card is gone from the pending view
-- [ ] 3.4 Empty/too-short pasted text shows an inline, understandable message (not a blank list) — per US-01 Acceptance Criteria
-- [ ] 3.5 Unauthenticated visit to `/generate` redirects to `/auth/signin`
+- [x] 3.3 Full walkthrough: paste text → see proposals → edit one → accept it → reject another → refresh page confirms accepted card persists and rejected card is gone from the pending view — 2026-09-03
+- [x] 3.4 Empty/too-short pasted text shows an inline, understandable message (not a blank list) — per US-01 Acceptance Criteria, 2026-09-03
+- [x] 3.5 Unauthenticated visit to `/generate` redirects to `/auth/signin` — 2026-09-03
 
 ### Phase 4: Error handling polish and verification pass
 
