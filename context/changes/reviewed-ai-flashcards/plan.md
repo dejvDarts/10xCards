@@ -194,6 +194,8 @@ New `supabase/migrations/*_create_flashcards.sql` file only; no existing data to
 
 ### Phase 2: AI generation API
 
+Implementation: `a339c5a`
+
 #### Automated
 
 - [ ] 2.1 `npm run lint` passes on new files (blocked by Node out-of-memory in the current environment)
