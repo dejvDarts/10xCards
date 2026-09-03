@@ -192,3 +192,4 @@ What's already in place in the codebase as of `2026-09-02` (auto-researched + us
 
 - **2026-09-03 — F-01 / private-flashcard-storage:** delivered as Phase 1 of S-01 with per-user RLS.
 - **2026-09-03 — S-01 / reviewed-ai-flashcards:** paste, generate, review, edit, accept/reject, and private persistence verified end-to-end. Spaced-repetition availability remains in S-05.
+- **S-01: user can paste source text, receive flashcard proposals, review each proposal, and save accepted flashcards to their collection.** — Archived 2026-09-03 → `context/archive/2026-09-02-reviewed-ai-flashcards/`. Lesson: —.
