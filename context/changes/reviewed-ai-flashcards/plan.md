@@ -185,19 +185,19 @@ New `supabase/migrations/*_create_flashcards.sql` file only; no existing data to
 
 #### Automated
 
-- [x] 1.1 `npx supabase db reset` (or migration apply) runs cleanly against local Supabase
-- [x] 1.2 `npm run build` succeeds with new types compiled
+- [x] 1.1 `npx supabase db reset` (or migration apply) runs cleanly against local Supabase — 64e903d
+- [x] 1.2 `npm run build` succeeds with new types compiled — 64e903d
 
 #### Manual
 
-- [x] 1.3 Inserting a row as user A and querying as user B (different `auth.uid()`) returns zero rows
+- [x] 1.3 Inserting a row as user A and querying as user B (different `auth.uid()`) returns zero rows — 64e903d
 
 ### Phase 2: AI generation API
 
 #### Automated
 
-- [ ] 2.1 `npm run lint` passes on new files
-- [ ] 2.2 `npm run build` succeeds
+- [ ] 2.1 `npm run lint` passes on new files (blocked by Node out-of-memory in the current environment)
+- [ ] 2.2 `npm run build` succeeds (blocked by a Node worker EINVAL in the current environment)
 
 #### Manual
 
