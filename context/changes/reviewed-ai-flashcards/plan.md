@@ -198,8 +198,8 @@ Implementation: `a339c5a`
 
 #### Automated
 
-- [ ] 2.1 `npm run lint` passes on new files (blocked by Node out-of-memory in the current environment)
-- [ ] 2.2 `npm run build` succeeds (blocked by a Node worker EINVAL in the current environment)
+- [x] 2.1 `npm run lint` passes on new files — 2026-09-03
+- [x] 2.2 `npm run build` succeeds — 2026-09-03
 
 #### Manual
 
