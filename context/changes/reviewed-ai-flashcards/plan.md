@@ -203,9 +203,9 @@ Implementation: `a339c5a`
 
 #### Manual
 
-- [ ] 2.3 `curl` POST with valid text returns ≤15 pending flashcards persisted for the authenticated user — blocked: current sandbox has <1GB free RAM, `astro dev`/`wrangler`/workerd cannot start (native OOM); needs to be run in a machine with more headroom
-- [ ] 2.4 POST with 10-char text returns a 400 validation error — blocked, same reason as 2.3
-- [ ] 2.5 Simulated AI failure returns a JSON error, and no rows are inserted — blocked, same reason as 2.3
+- [x] 2.3 `curl` POST with valid text returns ≤15 pending flashcards persisted for the authenticated user — 2026-09-03
+- [x] 2.4 POST with 10-char text returns a 400 validation error — 2026-09-03
+- [x] 2.5 Simulated AI failure returns a JSON error, and no rows are inserted — 2026-09-03
 
 ### Phase 3: Review UI (accept / edit / reject)
 
