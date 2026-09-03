@@ -2,7 +2,7 @@
   "package": "@przeprogramowani/10x-cli",
   "version": "1.20.0",
   "manifestVersion": 3,
-  "lastApplied": "2026-09-02T13:21:31.138Z",
+  "lastApplied": "2026-09-03T13:13:37.428Z",
   "lessonId": "m2l2",
   "course": "10xdevs3",
   "tool": "copilot",
@@ -579,7 +579,7 @@
       "configs": []
     },
     "m2l2": {
-      "appliedAt": "2026-09-02T13:21:31.136Z",
+      "appliedAt": "2026-09-03T13:13:37.427Z",
       "skills": {
         "10x-init": {
           "files": [
