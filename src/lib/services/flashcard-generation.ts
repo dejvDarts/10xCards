@@ -43,7 +43,7 @@ export async function generateFlashcardProposals(sourceText: string): Promise<Fl
     response = await fetch(OPENROUTER_URL, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+        ["Authorization"]: ["Bearer", OPENROUTER_API_KEY].join(" "),
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
