@@ -46,7 +46,7 @@ Professionals lose too much time creating high-quality learning flashcards by ha
 | S-01 | reviewed-ai-flashcards      | turn pasted text into reviewed, saved flashcards                               | F-01          | US-01, FR-003, FR-004                  | done     |
 | S-02 | manual-flashcard-creation   | create a flashcard manually                                                    | F-01          | FR-005                                 | proposed |
 | S-03 | personal-flashcard-list     | browse their saved flashcards                                                  | S-01          | FR-006                                 | done |
-| S-04 | saved-flashcard-maintenance | edit or delete a saved flashcard                                               | S-03          | FR-007, FR-008                         | proposed |
+| S-04 | saved-flashcard-maintenance | edit or delete a saved flashcard                                               | S-03          | FR-007, FR-008                         | done |
 | S-05 | spaced-repetition-session   | study saved flashcards in a review session                                     | S-01, F-02    | FR-009                                 | blocked  |
 
 ## Streams
@@ -147,7 +147,7 @@ What's already in place in the codebase as of `2026-09-02` (auto-researched + us
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Browsing comes first so maintenance actions operate on a clear personal collection rather than adding an isolated management surface.
-- **Status:** proposed
+- **Status:** done
 
 ### S-05: Spaced-repetition session
 
@@ -194,3 +194,4 @@ What's already in place in the codebase as of `2026-09-02` (auto-researched + us
 - **2026-09-03 — S-01 / reviewed-ai-flashcards:** paste, generate, review, edit, accept/reject, and private persistence verified end-to-end. Spaced-repetition availability remains in S-05.
 - **S-01: user can paste source text, receive flashcard proposals, review each proposal, and save accepted flashcards to their collection.** — Archived 2026-09-03 → `context/archive/2026-09-02-reviewed-ai-flashcards/`. Lesson: —.
 - **S-03: browse their saved flashcards** — Archived 2026-09-04 → `context/archive/2026-09-04-personal-flashcard-list/`. Lesson: —.
+- **S-04: user can edit or delete a flashcard already in their collection.** — Archived 2026-09-05 → `context/archive/2026-09-05-saved-flashcard-maintenance/`. Lesson: —.
