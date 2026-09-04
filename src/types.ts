@@ -29,7 +29,7 @@ export interface GenerateFlashcardsResponse {
 
 /** Request body for `PATCH /api/flashcards/[id]`. */
 export interface UpdateFlashcardRequest {
-  status: "accepted" | "rejected";
+  status?: "accepted" | "rejected";
   front?: string;
   back?: string;
 }
