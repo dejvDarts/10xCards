@@ -3,7 +3,7 @@ project: "10xCards"
 version: 1
 status: draft
 created: 2026-09-02
-updated: 2026-09-03
+updated: 2026-09-05
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -45,7 +45,7 @@ Professionals lose too much time creating high-quality learning flashcards by ha
 | F-02 | choose-review-algorithm     | (foundation) an existing review algorithm is selected for the learning session | —             | FR-009                                 | blocked  |
 | S-01 | reviewed-ai-flashcards      | turn pasted text into reviewed, saved flashcards                               | F-01          | US-01, FR-003, FR-004                  | done     |
 | S-02 | manual-flashcard-creation   | create a flashcard manually                                                    | F-01          | FR-005                                 | proposed |
-| S-03 | personal-flashcard-list     | browse their saved flashcards                                                  | S-01          | FR-006                                 | proposed |
+| S-03 | personal-flashcard-list     | browse their saved flashcards                                                  | S-01          | FR-006                                 | done |
 | S-04 | saved-flashcard-maintenance | edit or delete a saved flashcard                                               | S-03          | FR-007, FR-008                         | proposed |
 | S-05 | spaced-repetition-session   | study saved flashcards in a review session                                     | S-01, F-02    | FR-009                                 | blocked  |
 
@@ -135,7 +135,7 @@ What's already in place in the codebase as of `2026-09-02` (auto-researched + us
 - **Blockers:** —
 - **Unknowns:** —
 - **Risk:** Sequencing after saved AI cards ensures the list is verified with the collection created by the primary flow.
-- **Status:** proposed
+- **Status:** done
 
 ### S-04: Saved flashcard maintenance
 
@@ -193,3 +193,4 @@ What's already in place in the codebase as of `2026-09-02` (auto-researched + us
 - **2026-09-03 — F-01 / private-flashcard-storage:** delivered as Phase 1 of S-01 with per-user RLS.
 - **2026-09-03 — S-01 / reviewed-ai-flashcards:** paste, generate, review, edit, accept/reject, and private persistence verified end-to-end. Spaced-repetition availability remains in S-05.
 - **S-01: user can paste source text, receive flashcard proposals, review each proposal, and save accepted flashcards to their collection.** — Archived 2026-09-03 → `context/archive/2026-09-02-reviewed-ai-flashcards/`. Lesson: —.
+- **S-03: browse their saved flashcards** — Archived 2026-09-04 → `context/archive/2026-09-04-personal-flashcard-list/`. Lesson: —.
