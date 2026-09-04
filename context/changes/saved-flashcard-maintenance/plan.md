@@ -260,15 +260,15 @@ RLS policy from the S-01 migration.
 
 #### Automated
 
-- [x] 2.1 `npm run lint` passes
-- [x] 2.2 `npm run build` succeeds
+- [x] 2.1 `npm run lint` passes — fb44cec
+- [x] 2.2 `npm run build` succeeds — fb44cec
 
 #### Manual
 
-- [x] 2.3 Click Edit on a card → front/back become editable, pre-filled with current text; Save is disabled if either field is emptied
-- [x] 2.4 Save an edit → card updates immediately; refreshing the page confirms it persisted
-- [x] 2.5 Cancel an edit → reverts to the original text with no request sent
-- [x] 2.6 Click Delete → confirmation dialog appears; Cancel closes it with no change; Confirm removes the card immediately, and refreshing confirms it's gone
-- [x] 2.7 Deleting the only card on page 2 of 2 automatically navigates back to page 1
-- [x] 2.8 Simulating a failed edit or delete shows the inline error banner and rolls back the optimistic change
-- [x] 2.9 A second user cannot edit or delete the first user's cards
+- [x] 2.3 Click Edit on a card → front/back become editable, pre-filled with current text; Save is disabled if either field is emptied — fb44cec
+- [x] 2.4 Save an edit → card updates immediately; refreshing the page confirms it persisted — fb44cec
+- [x] 2.5 Cancel an edit → reverts to the original text with no request sent — fb44cec
+- [x] 2.6 Click Delete → confirmation dialog appears; Cancel closes it with no change; Confirm removes the card immediately, and refreshing confirms it's gone — fb44cec
+- [x] 2.7 Deleting the only card on page 2 of 2 automatically navigates back to page 1 — fb44cec
+- [x] 2.8 Simulating a failed edit or delete shows the inline error banner and rolls back the optimistic change — fb44cec
+- [x] 2.9 A second user cannot edit or delete the first user's cards — fb44cec
