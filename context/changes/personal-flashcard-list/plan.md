@@ -352,13 +352,13 @@ index only — no column or policy changes, no backfill needed).
 
 #### Automated
 
-- [x] 2.1 `npm run lint` passes
-- [x] 2.2 `npm run build` succeeds
+- [x] 2.1 `npm run lint` passes — dc3abd7
+- [x] 2.2 `npm run build` succeeds — dc3abd7
 
 #### Manual
 
-- [x] 2.3 Visiting `/flashcards` while signed in with 25+ accepted cards shows page 1 immediately (no spinner flash), 20 cards, front/back only
-- [x] 2.4 Clicking Next/Prev loads the next/previous page and updates the "Page X of Y" text; Prev is disabled on page 1, Next disabled on the last page
-- [x] 2.5 A user with zero accepted cards sees the empty state with a working link to `/generate`
-- [x] 2.6 Simulating a failed page-change fetch shows the inline error banner with a working Retry button, without losing the currently displayed page's cards
-- [x] 2.7 Unauthenticated visit to `/flashcards` redirects to `/auth/signin`
+- [x] 2.3 Visiting `/flashcards` while signed in with 25+ accepted cards shows page 1 immediately (no spinner flash), 20 cards, front/back only — dc3abd7
+- [x] 2.4 Clicking Next/Prev loads the next/previous page and updates the "Page X of Y" text; Prev is disabled on page 1, Next disabled on the last page — dc3abd7
+- [x] 2.5 A user with zero accepted cards sees the empty state with a working link to `/generate` — dc3abd7
+- [x] 2.6 Simulating a failed page-change fetch shows the inline error banner with a working Retry button, without losing the currently displayed page's cards — dc3abd7
+- [x] 2.7 Unauthenticated visit to `/flashcards` redirects to `/auth/signin` — dc3abd7
