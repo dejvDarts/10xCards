@@ -33,3 +33,12 @@ export interface UpdateFlashcardRequest {
   front?: string;
   back?: string;
 }
+
+/** Response body for `GET /api/flashcards`. */
+export interface ListFlashcardsResponse {
+  flashcards: Flashcard[];
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+}
