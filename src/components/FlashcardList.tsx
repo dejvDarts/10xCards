@@ -1,8 +1,21 @@
-import { ChevronLeft, ChevronRight, LoaderCircle, RefreshCw } from "lucide-react";
+import { useState } from "react";
+import { ChevronLeft, ChevronRight, LoaderCircle, Pencil, RefreshCw, Trash2, X } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
 import { useFlashcardList } from "@/components/hooks/useFlashcardList";
-import type { ListFlashcardsResponse } from "@/types";
+import type { Flashcard, ListFlashcardsResponse } from "@/types";
 
 interface FlashcardListProps {
   initialData: ListFlashcardsResponse | null;
@@ -10,10 +23,37 @@ interface FlashcardListProps {
 }
 
 export default function FlashcardList({ initialData, initialError }: FlashcardListProps) {
-  const { error, flashcards, goToPage, isLoading, page, retry, total, totalPages } = useFlashcardList(
-    initialData,
-    initialError,
-  );
+  const {
+    deleteFlashcard,
+    editFlashcard,
+    error,
+    flashcards,
+    goToPage,
+    isLoading,
+    mutatingCardIds,
+    page,
+    retry,
+    total,
+    totalPages,
+  } = useFlashcardList(initialData, initialError);
+  const [editingCardId, setEditingCardId] = useState<string | null>(null);
+  const [draftFront, setDraftFront] = useState("");
+  const [draftBack, setDraftBack] = useState("");
+
+  function startEditing(card: Flashcard) {
+    setEditingCardId(card.id);
+    setDraftFront(card.front);
+    setDraftBack(card.back);
+  }
+
+  function cancelEditing() {
+    setEditingCardId(null);
+  }
+
+  async function saveEditing(card: Flashcard) {
+    await editFlashcard(card, { front: draftFront, back: draftBack });
+    setEditingCardId(null);
+  }
 
   return (
     <div className="space-y-8">
@@ -56,20 +96,127 @@ export default function FlashcardList({ initialData, initialError }: FlashcardLi
             <span className="text-sm text-blue-100/60">{total} saved</span>
           </div>
           <div className="grid gap-4 lg:grid-cols-2">
-            {flashcards.map((card) => (
-              <Card key={card.id} className="gap-4 rounded-lg border-white/15 bg-white/10 py-5 text-white shadow-none">
-                <CardHeader className="px-5">
-                  <CardTitle className="text-sm text-blue-100/70">Question</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3 px-5">
-                  <p>{card.front}</p>
-                  <div>
-                    <p className="mb-1 text-sm font-medium text-blue-100">Answer</p>
-                    <p className="text-blue-100/80">{card.back}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+            {flashcards.map((card) => {
+              const isMutating = mutatingCardIds.has(card.id);
+              const isEditing = editingCardId === card.id;
+              const canSave = draftFront.trim().length > 0 && draftBack.trim().length > 0;
+
+              return (
+                <Card
+                  key={card.id}
+                  className="gap-4 rounded-lg border-white/15 bg-white/10 py-5 text-white shadow-none"
+                >
+                  <CardHeader className="px-5">
+                    <CardTitle className="text-sm text-blue-100/70">Question</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3 px-5">
+                    {isEditing ? (
+                      <>
+                        <Textarea
+                          value={draftFront}
+                          onChange={(event) => {
+                            setDraftFront(event.target.value);
+                          }}
+                          className="min-h-20 border-white/20 bg-slate-950/30 text-white"
+                          disabled={isMutating}
+                        />
+                        <div>
+                          <p className="mb-1 text-sm font-medium text-blue-100">Answer</p>
+                          <Textarea
+                            value={draftBack}
+                            onChange={(event) => {
+                              setDraftBack(event.target.value);
+                            }}
+                            className="min-h-24 border-white/20 bg-slate-950/30 text-white"
+                            disabled={isMutating}
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <p>{card.front}</p>
+                        <div>
+                          <p className="mb-1 text-sm font-medium text-blue-100">Answer</p>
+                          <p className="text-blue-100/80">{card.back}</p>
+                        </div>
+                      </>
+                    )}
+                  </CardContent>
+                  <CardFooter className="justify-end gap-2 px-5">
+                    {isEditing ? (
+                      <>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          disabled={isMutating}
+                          onClick={cancelEditing}
+                          className="border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white"
+                        >
+                          <X />
+                          Cancel
+                        </Button>
+                        <Button
+                          type="button"
+                          disabled={isMutating || !canSave}
+                          onClick={() => {
+                            void saveEditing(card);
+                          }}
+                          className="bg-emerald-300 text-emerald-950 hover:bg-emerald-200"
+                        >
+                          {isMutating ? <LoaderCircle className="animate-spin" /> : null}
+                          Save
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              disabled={isMutating}
+                              className="border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white"
+                            >
+                              <Trash2 />
+                              Delete
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete this flashcard?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This permanently removes the flashcard. This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => {
+                                  void deleteFlashcard(card);
+                                }}
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                        <Button
+                          type="button"
+                          disabled={isMutating}
+                          onClick={() => {
+                            startEditing(card);
+                          }}
+                          className="bg-blue-300 text-slate-950 hover:bg-blue-200"
+                        >
+                          <Pencil />
+                          Edit
+                        </Button>
+                      </>
+                    )}
+                  </CardFooter>
+                </Card>
+              );
+            })}
           </div>
 
           <div className="mt-6 flex items-center justify-center gap-4">

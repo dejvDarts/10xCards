@@ -244,31 +244,31 @@ RLS policy from the S-01 migration.
 
 #### Automated
 
-- [x] 1.1 `npm run lint` passes
-- [x] 1.2 `npm run build` succeeds
+- [x] 1.1 `npm run lint` passes — 1a0abf1
+- [x] 1.2 `npm run build` succeeds — 1a0abf1
 
 #### Manual
 
-- [x] 1.3 `curl` PATCH with only `{ front, back }` (no `status`) on an existing accepted card updates the text and leaves `status` unchanged
-- [x] 1.4 `curl` PATCH with `{}` (empty body) returns 400 with the "at least one of..." message
-- [x] 1.5 `curl` PATCH with only `{ status: "accepted" }` (S-01 regression check) still works exactly as before
-- [x] 1.6 `curl` DELETE on a card the caller owns returns 204, and a subsequent `GET /api/flashcards` no longer includes it
-- [x] 1.7 `curl` DELETE on another user's card ID (or a nonexistent ID) returns 404
-- [x] 1.8 `curl` DELETE without a session cookie returns 401
+- [x] 1.3 `curl` PATCH with only `{ front, back }` (no `status`) on an existing accepted card updates the text and leaves `status` unchanged — 1a0abf1
+- [x] 1.4 `curl` PATCH with `{}` (empty body) returns 400 with the "at least one of..." message — 1a0abf1
+- [x] 1.5 `curl` PATCH with only `{ status: "accepted" }` (S-01 regression check) still works exactly as before — 1a0abf1
+- [x] 1.6 `curl` DELETE on a card the caller owns returns 204, and a subsequent `GET /api/flashcards` no longer includes it — 1a0abf1
+- [x] 1.7 `curl` DELETE on another user's card ID (or a nonexistent ID) returns 404 — 1a0abf1
+- [x] 1.8 `curl` DELETE without a session cookie returns 401 — 1a0abf1
 
 ### Phase 2: Edit & delete UI
 
 #### Automated
 
-- [ ] 2.1 `npm run lint` passes
-- [ ] 2.2 `npm run build` succeeds
+- [x] 2.1 `npm run lint` passes
+- [x] 2.2 `npm run build` succeeds
 
 #### Manual
 
-- [ ] 2.3 Click Edit on a card → front/back become editable, pre-filled with current text; Save is disabled if either field is emptied
-- [ ] 2.4 Save an edit → card updates immediately; refreshing the page confirms it persisted
-- [ ] 2.5 Cancel an edit → reverts to the original text with no request sent
-- [ ] 2.6 Click Delete → confirmation dialog appears; Cancel closes it with no change; Confirm removes the card immediately, and refreshing confirms it's gone
-- [ ] 2.7 Deleting the only card on page 2 of 2 automatically navigates back to page 1
-- [ ] 2.8 Simulating a failed edit or delete shows the inline error banner and rolls back the optimistic change
-- [ ] 2.9 A second user cannot edit or delete the first user's cards
+- [x] 2.3 Click Edit on a card → front/back become editable, pre-filled with current text; Save is disabled if either field is emptied
+- [x] 2.4 Save an edit → card updates immediately; refreshing the page confirms it persisted
+- [x] 2.5 Cancel an edit → reverts to the original text with no request sent
+- [x] 2.6 Click Delete → confirmation dialog appears; Cancel closes it with no change; Confirm removes the card immediately, and refreshing confirms it's gone
+- [x] 2.7 Deleting the only card on page 2 of 2 automatically navigates back to page 1
+- [x] 2.8 Simulating a failed edit or delete shows the inline error banner and rolls back the optimistic change
+- [x] 2.9 A second user cannot edit or delete the first user's cards
