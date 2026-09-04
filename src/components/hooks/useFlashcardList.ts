@@ -75,22 +75,35 @@ export function useFlashcardList(initialData: ListFlashcardsResponse | null, ini
 
     setError(null);
     startMutating(card.id);
-    const remaining = flashcards.length - 1;
-    const newTotal = total - 1;
-    setFlashcards((current) => current.filter((c) => c.id !== card.id));
-    setTotal(newTotal);
+
+    const deleteState = { willBeEmpty: false };
+    setFlashcards((current) => {
+      const next = current.filter((c) => c.id !== card.id);
+      deleteState.willBeEmpty = next.length === 0;
+      return next;
+    });
+
+    let newTotal = total;
+    setTotal((t) => {
+      newTotal = t - 1;
+      return newTotal;
+    });
     setTotalPages(Math.max(1, Math.ceil(newTotal / limit)));
 
     try {
       const response = await fetch(`/api/flashcards/${card.id}`, { method: "DELETE" });
       await readJsonResponse<null>(response);
-      if (remaining === 0 && page > 1) {
+      if (deleteState.willBeEmpty && page > 1) {
         await goToPage(page - 1);
       }
     } catch (requestError) {
       setFlashcards((current) => [...current.slice(0, cardIndex), card, ...current.slice(cardIndex)]);
-      setTotal(total);
-      setTotalPages(Math.max(1, Math.ceil(total / limit)));
+      let restoredTotal = newTotal;
+      setTotal((t) => {
+        restoredTotal = t + 1;
+        return restoredTotal;
+      });
+      setTotalPages(Math.max(1, Math.ceil(restoredTotal / limit)));
       setError(requestError instanceof Error ? requestError.message : "Flashcard delete failed");
     } finally {
       stopMutating(card.id);

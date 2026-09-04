@@ -191,6 +191,7 @@ export default function FlashcardList({ initialData, initialError }: FlashcardLi
                             <AlertDialogFooter>
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
                               <AlertDialogAction
+                                variant="destructive"
                                 onClick={() => {
                                   void deleteFlashcard(card);
                                 }}
