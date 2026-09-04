@@ -1,18 +1,6 @@
 import { useState } from "react";
+import { readJsonResponse } from "@/lib/http";
 import type { Flashcard, GenerateFlashcardsResponse, UpdateFlashcardRequest } from "@/types";
-
-interface ApiError {
-  error?: string;
-}
-
-async function readResponse<T>(response: Response): Promise<T> {
-  const body: unknown = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    const message = typeof body === "object" && body !== null ? (body as ApiError).error : undefined;
-    throw new Error(message ?? "The request could not be completed");
-  }
-  return body as T;
-}
 
 export function useFlashcardProposals() {
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
@@ -32,7 +20,7 @@ export function useFlashcardProposals() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ sourceText }),
       });
-      const result = await readResponse<GenerateFlashcardsResponse>(response);
+      const result = await readJsonResponse<GenerateFlashcardsResponse>(response);
       setFlashcards(result.flashcards);
     } catch (requestError) {
       setCanRetryGeneration(true);
@@ -61,7 +49,7 @@ export function useFlashcardProposals() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status, front: card.front, back: card.back }),
       });
-      await readResponse<Flashcard>(response);
+      await readJsonResponse<Flashcard>(response);
     } catch (requestError) {
       setFlashcards((current) => [...current.slice(0, cardIndex), card, ...current.slice(cardIndex)]);
       setError(requestError instanceof Error ? requestError.message : "Flashcard update failed");

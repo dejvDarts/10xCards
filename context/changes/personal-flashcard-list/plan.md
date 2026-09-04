@@ -336,29 +336,29 @@ index only — no column or policy changes, no backfill needed).
 
 #### Automated
 
-- [x] 1.1 `npx supabase db reset` (or migration apply) runs cleanly against local Supabase
-- [x] 1.2 `npm run lint` passes on new files
-- [x] 1.3 `npm run build` succeeds
+- [x] 1.1 `npx supabase db reset` (or migration apply) runs cleanly against local Supabase — efdad9a
+- [x] 1.2 `npm run lint` passes on new files — efdad9a
+- [x] 1.3 `npm run build` succeeds — efdad9a
 
 #### Manual
 
-- [x] 1.4 `curl` GET (authenticated) with 25 accepted cards seeded returns 20 rows on page 1, 5 on page 2, `total: 25`, `totalPages: 2`
-- [x] 1.5 `curl` GET with `page=99` (beyond total) returns `200` and an empty `flashcards` array, not an error
-- [x] 1.6 `curl` GET without a session cookie returns 401
-- [x] 1.7 Seeding one `pending`, one `rejected`, and one `accepted` card confirms only the `accepted` one is returned
-- [x] 1.8 `curl` GET with no `page` query param returns page 1 (defaults correctly, does not 400)
+- [x] 1.4 `curl` GET (authenticated) with 25 accepted cards seeded returns 20 rows on page 1, 5 on page 2, `total: 25`, `totalPages: 2` — efdad9a
+- [x] 1.5 `curl` GET with `page=99` (beyond total) returns `200` and an empty `flashcards` array, not an error — efdad9a
+- [x] 1.6 `curl` GET without a session cookie returns 401 — efdad9a
+- [x] 1.7 Seeding one `pending`, one `rejected`, and one `accepted` card confirms only the `accepted` one is returned — efdad9a
+- [x] 1.8 `curl` GET with no `page` query param returns page 1 (defaults correctly, does not 400) — efdad9a
 
 ### Phase 2: Browse page & UI
 
 #### Automated
 
-- [ ] 2.1 `npm run lint` passes
-- [ ] 2.2 `npm run build` succeeds
+- [x] 2.1 `npm run lint` passes
+- [x] 2.2 `npm run build` succeeds
 
 #### Manual
 
-- [ ] 2.3 Visiting `/flashcards` while signed in with 25+ accepted cards shows page 1 immediately (no spinner flash), 20 cards, front/back only
-- [ ] 2.4 Clicking Next/Prev loads the next/previous page and updates the "Page X of Y" text; Prev is disabled on page 1, Next disabled on the last page
-- [ ] 2.5 A user with zero accepted cards sees the empty state with a working link to `/generate`
-- [ ] 2.6 Simulating a failed page-change fetch shows the inline error banner with a working Retry button, without losing the currently displayed page's cards
-- [ ] 2.7 Unauthenticated visit to `/flashcards` redirects to `/auth/signin`
+- [x] 2.3 Visiting `/flashcards` while signed in with 25+ accepted cards shows page 1 immediately (no spinner flash), 20 cards, front/back only
+- [x] 2.4 Clicking Next/Prev loads the next/previous page and updates the "Page X of Y" text; Prev is disabled on page 1, Next disabled on the last page
+- [x] 2.5 A user with zero accepted cards sees the empty state with a working link to `/generate`
+- [x] 2.6 Simulating a failed page-change fetch shows the inline error banner with a working Retry button, without losing the currently displayed page's cards
+- [x] 2.7 Unauthenticated visit to `/flashcards` redirects to `/auth/signin`
