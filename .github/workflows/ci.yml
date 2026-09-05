@@ -34,6 +34,13 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: Push Supabase migrations
+        run: |
+          REF=$(echo "$SUPABASE_URL" | sed -E 's#https://([a-z0-9]+)\.supabase\.co.*#\1#')
+          npx supabase db push --project-ref "$REF" --yes
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       - run: npm run build
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
