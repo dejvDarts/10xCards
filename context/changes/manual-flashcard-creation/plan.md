@@ -201,33 +201,33 @@ None — no schema change required.
 
 #### Automated
 
-- [x] 1.1 `npm run lint` passes
-- [x] 1.2 `npm run build` succeeds
+- [x] 1.1 `npm run lint` passes — 407ece3
+- [x] 1.2 `npm run build` succeeds — 407ece3
 
 #### Manual
 
-- [x] 1.3 `POST /api/flashcards` with valid front/back returns 201 and the new row has `status: 'accepted'`, `source_text: null`
-- [x] 1.4 Empty or whitespace-only front/back returns 400
-- [x] 1.5 Front or back over 1,000 characters returns 400
-- [x] 1.6 Request without a valid session returns 401
-- [x] 1.7 The created row is only visible to the creating user (existing RLS policy)
+- [x] 1.3 `POST /api/flashcards` with valid front/back returns 201 and the new row has `status: 'accepted'`, `source_text: null` — 407ece3
+- [x] 1.4 Empty or whitespace-only front/back returns 400 — 407ece3
+- [x] 1.5 Front or back over 1,000 characters returns 400 — 407ece3
+- [x] 1.6 Request without a valid session returns 401 — 407ece3
+- [x] 1.7 The created row is only visible to the creating user (existing RLS policy) — 407ece3
 
 ### Phase 2: Manual creation UI
 
 #### Automated
 
-- [ ] 2.1 `npm run lint` passes
-- [ ] 2.2 `npm run build` succeeds
+- [x] 2.1 `npm run lint` passes
+- [x] 2.2 `npm run build` succeeds
 
 #### Manual
 
-- [ ] 2.3 From an empty collection, "Create manually" opens the form; saving shows the card immediately and clears the empty-state message
-- [ ] 2.4 From a non-empty page 1, the toggle button opens the form; saving prepends the card, form clears and stays open, a second save also succeeds
-- [ ] 2.5 Saving while on page 2 navigates back to page 1 with the new card visible on top
-- [ ] 2.6 Saving with a full 20-item page 1 keeps the visible page at 20 items and updates the page count correctly
-- [ ] 2.7 Save stays disabled while either field is empty/whitespace-only; enables once both have content
-- [ ] 2.8 A 1,000-character entry saves; a 1,001-character entry is blocked client-side
-- [ ] 2.9 A failed save shows the existing red error banner and leaves the draft text in place
-- [ ] 2.10 The "New flashcard" Topbar link navigates to `/flashcards` from `/generate` and `/dashboard`
-- [ ] 2.11 The "New flashcard" Topbar link also appears and works for a signed-in user on the homepage (`/`)
-- [ ] 2.12 No regressions to existing edit/delete/pagination behavior on `/flashcards`
+- [x] 2.3 From an empty collection, "Create manually" opens the form; saving shows the card immediately and clears the empty-state message
+- [x] 2.4 From a non-empty page 1, the toggle button opens the form; saving prepends the card, form clears and stays open, a second save also succeeds
+- [x] 2.5 Saving while on page 2 navigates back to page 1 with the new card visible on top
+- [x] 2.6 Saving with a full 20-item page 1 keeps the visible page at 20 items and updates the page count correctly
+- [x] 2.7 Save stays disabled while either field is empty/whitespace-only; enables once both have content
+- [x] 2.8 A 1,000-character entry saves; a 1,001-character entry is blocked client-side
+- [x] 2.9 A failed save shows the existing red error banner and leaves the draft text in place
+- [x] 2.10 The "New flashcard" Topbar link navigates to `/flashcards` from `/generate` and `/dashboard`
+- [x] 2.11 The "New flashcard" Topbar link also appears and works for a signed-in user on the homepage (`/`)
+- [x] 2.12 No regressions to existing edit/delete/pagination behavior on `/flashcards`

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { readJsonResponse } from "@/lib/http";
-import type { Flashcard, ListFlashcardsResponse } from "@/types";
+import type { CreateFlashcardRequest, Flashcard, ListFlashcardsResponse } from "@/types";
 
 export function useFlashcardList(initialData: ListFlashcardsResponse | null, initialError?: string) {
   const [flashcards, setFlashcards] = useState<Flashcard[]>(initialData?.flashcards ?? []);
@@ -11,6 +11,7 @@ export function useFlashcardList(initialData: ListFlashcardsResponse | null, ini
   const [error, setError] = useState<string | null>(initialError ?? null);
   const [isLoading, setIsLoading] = useState(false);
   const [mutatingCardIds, setMutatingCardIds] = useState<Set<string>>(new Set());
+  const [isCreating, setIsCreating] = useState(false);
 
   async function goToPage(nextPage: number) {
     setError(null);
@@ -110,12 +111,42 @@ export function useFlashcardList(initialData: ListFlashcardsResponse | null, ini
     }
   }
 
+  async function createFlashcard(input: CreateFlashcardRequest) {
+    setError(null);
+    setIsCreating(true);
+
+    try {
+      const response = await fetch("/api/flashcards", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input),
+      });
+      const created = await readJsonResponse<Flashcard>(response);
+
+      if (page !== 1) {
+        await goToPage(1);
+      } else {
+        setFlashcards((current) => [created, ...current].slice(0, limit));
+        const newTotal = total + 1;
+        setTotal(newTotal);
+        setTotalPages(Math.max(1, Math.ceil(newTotal / limit)));
+      }
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : "Flashcard creation failed");
+      throw requestError;
+    } finally {
+      setIsCreating(false);
+    }
+  }
+
   return {
+    createFlashcard,
     deleteFlashcard,
     editFlashcard,
     error,
     flashcards,
     goToPage,
+    isCreating,
     isLoading,
     mutatingCardIds,
     page,

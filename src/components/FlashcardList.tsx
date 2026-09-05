@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { ChevronLeft, ChevronRight, LoaderCircle, Pencil, RefreshCw, Trash2, X } from "lucide-react";
+import { type SubmitEvent, useState } from "react";
+import { ChevronLeft, ChevronRight, LoaderCircle, Pencil, Plus, RefreshCw, Trash2, X } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,6 +17,25 @@ import { Textarea } from "@/components/ui/textarea";
 import { useFlashcardList } from "@/components/hooks/useFlashcardList";
 import type { Flashcard, ListFlashcardsResponse } from "@/types";
 
+const MAX_FIELD_LENGTH = 1000;
+
+function fieldCounter(value: string): { text: string; isWarning: boolean } {
+  if (value.length > MAX_FIELD_LENGTH) {
+    return {
+      text: `${(value.length - MAX_FIELD_LENGTH).toLocaleString()} characters over the limit.`,
+      isWarning: true,
+    };
+  }
+  return {
+    text: `${value.length.toLocaleString()} / ${MAX_FIELD_LENGTH.toLocaleString()} characters`,
+    isWarning: false,
+  };
+}
+
+function isFieldValid(value: string): boolean {
+  return value.trim().length > 0 && value.length <= MAX_FIELD_LENGTH;
+}
+
 interface FlashcardListProps {
   initialData: ListFlashcardsResponse | null;
   initialError?: string;
@@ -24,11 +43,13 @@ interface FlashcardListProps {
 
 export default function FlashcardList({ initialData, initialError }: FlashcardListProps) {
   const {
+    createFlashcard,
     deleteFlashcard,
     editFlashcard,
     error,
     flashcards,
     goToPage,
+    isCreating,
     isLoading,
     mutatingCardIds,
     page,
@@ -39,6 +60,22 @@ export default function FlashcardList({ initialData, initialError }: FlashcardLi
   const [editingCardId, setEditingCardId] = useState<string | null>(null);
   const [draftFront, setDraftFront] = useState("");
   const [draftBack, setDraftBack] = useState("");
+  const [isCreateFormOpen, setIsCreateFormOpen] = useState(false);
+  const [createFront, setCreateFront] = useState("");
+  const [createBack, setCreateBack] = useState("");
+  const canCreateSave = isFieldValid(createFront) && isFieldValid(createBack);
+
+  async function handleCreateSubmit(event: SubmitEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!canCreateSave) return;
+    try {
+      await createFlashcard({ front: createFront, back: createBack });
+      setCreateFront("");
+      setCreateBack("");
+    } catch {
+      // Draft intentionally left in place; the hook already surfaced the error banner.
+    }
+  }
 
   function startEditing(card: Flashcard) {
     setEditingCardId(card.id);
@@ -78,12 +115,110 @@ export default function FlashcardList({ initialData, initialError }: FlashcardLi
         </div>
       )}
 
+      <section aria-labelledby="create-flashcard-heading">
+        {isCreateFormOpen ? (
+          <form onSubmit={handleCreateSubmit} className="border-y border-white/10 py-6">
+            <h2 id="create-flashcard-heading" className="sr-only">
+              New flashcard
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="create-front" className="mb-1.5 block text-sm font-medium text-blue-100">
+                  Question
+                </label>
+                <Textarea
+                  id="create-front"
+                  value={createFront}
+                  onChange={(event) => {
+                    setCreateFront(event.target.value);
+                  }}
+                  placeholder="Front of the card..."
+                  className="min-h-20 border-white/20 bg-white/10 text-white placeholder:text-white/40"
+                  disabled={isCreating}
+                />
+                <p
+                  className={`mt-1 text-xs ${fieldCounter(createFront).isWarning ? "text-amber-200" : "text-blue-100/60"}`}
+                >
+                  {fieldCounter(createFront).text}
+                </p>
+              </div>
+              <div>
+                <label htmlFor="create-back" className="mb-1.5 block text-sm font-medium text-blue-100">
+                  Answer
+                </label>
+                <Textarea
+                  id="create-back"
+                  value={createBack}
+                  onChange={(event) => {
+                    setCreateBack(event.target.value);
+                  }}
+                  placeholder="Back of the card..."
+                  className="min-h-24 border-white/20 bg-white/10 text-white placeholder:text-white/40"
+                  disabled={isCreating}
+                />
+                <p
+                  className={`mt-1 text-xs ${fieldCounter(createBack).isWarning ? "text-amber-200" : "text-blue-100/60"}`}
+                >
+                  {fieldCounter(createBack).text}
+                </p>
+              </div>
+            </div>
+            <div className="mt-4 flex justify-end gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isCreating}
+                onClick={() => {
+                  setIsCreateFormOpen(false);
+                }}
+                className="border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={isCreating || !canCreateSave}
+                className="bg-blue-300 text-slate-950 hover:bg-blue-200"
+              >
+                {isCreating ? <LoaderCircle className="animate-spin" /> : <Plus />}
+                Save
+              </Button>
+            </div>
+          </form>
+        ) : (
+          <div className="flex justify-end border-y border-white/10 py-4">
+            <Button
+              type="button"
+              onClick={() => {
+                setIsCreateFormOpen(true);
+              }}
+              className="bg-blue-300 text-slate-950 hover:bg-blue-200"
+            >
+              <Plus />
+              New flashcard
+            </Button>
+          </div>
+        )}
+      </section>
+
       {!error && total === 0 && (
         <div className="border-y border-white/10 py-10 text-center">
           <p className="text-blue-100/75">You haven&apos;t saved any flashcards yet.</p>
-          <Button asChild className="mt-4 bg-blue-300 text-slate-950 hover:bg-blue-200">
-            <a href="/generate">Generate flashcards</a>
-          </Button>
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+            <Button asChild className="bg-blue-300 text-slate-950 hover:bg-blue-200">
+              <a href="/generate">Generate flashcards</a>
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setIsCreateFormOpen(true);
+              }}
+              className="border-white/20 bg-transparent text-white hover:bg-white/10 hover:text-white"
+            >
+              Create manually
+            </Button>
+          </div>
         </div>
       )}
 
