@@ -84,12 +84,11 @@ export function useFlashcardList(initialData: ListFlashcardsResponse | null, ini
       return next;
     });
 
-    let newTotal = total;
     setTotal((t) => {
-      newTotal = t - 1;
+      const newTotal = t - 1;
+      setTotalPages(Math.max(1, Math.ceil(newTotal / limit)));
       return newTotal;
     });
-    setTotalPages(Math.max(1, Math.ceil(newTotal / limit)));
 
     try {
       const response = await fetch(`/api/flashcards/${card.id}`, { method: "DELETE" });
@@ -99,12 +98,11 @@ export function useFlashcardList(initialData: ListFlashcardsResponse | null, ini
       }
     } catch (requestError) {
       setFlashcards((current) => [...current.slice(0, cardIndex), card, ...current.slice(cardIndex)]);
-      let restoredTotal = newTotal;
       setTotal((t) => {
-        restoredTotal = t + 1;
+        const restoredTotal = t + 1;
+        setTotalPages(Math.max(1, Math.ceil(restoredTotal / limit)));
         return restoredTotal;
       });
-      setTotalPages(Math.max(1, Math.ceil(restoredTotal / limit)));
       setError(requestError instanceof Error ? requestError.message : "Flashcard delete failed");
     } finally {
       stopMutating(card.id);
