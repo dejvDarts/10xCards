@@ -22,6 +22,12 @@ export interface GenerateFlashcardsRequest {
   sourceText: string;
 }
 
+/** Request body for `POST /api/flashcards`. */
+export interface CreateFlashcardRequest {
+  front: string;
+  back: string;
+}
+
 /** Response body for `POST /api/flashcards/generate`. */
 export interface GenerateFlashcardsResponse {
   flashcards: Flashcard[];
