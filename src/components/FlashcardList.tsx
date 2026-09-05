@@ -20,20 +20,22 @@ import type { Flashcard, ListFlashcardsResponse } from "@/types";
 const MAX_FIELD_LENGTH = 1000;
 
 function fieldCounter(value: string): { text: string; isWarning: boolean } {
-  if (value.length > MAX_FIELD_LENGTH) {
+  const trimmedLength = value.trim().length;
+  if (trimmedLength > MAX_FIELD_LENGTH) {
     return {
-      text: `${(value.length - MAX_FIELD_LENGTH).toLocaleString()} characters over the limit.`,
+      text: `${(trimmedLength - MAX_FIELD_LENGTH).toLocaleString()} characters over the limit.`,
       isWarning: true,
     };
   }
   return {
-    text: `${value.length.toLocaleString()} / ${MAX_FIELD_LENGTH.toLocaleString()} characters`,
+    text: `${trimmedLength.toLocaleString()} / ${MAX_FIELD_LENGTH.toLocaleString()} characters`,
     isWarning: false,
   };
 }
 
 function isFieldValid(value: string): boolean {
-  return value.trim().length > 0 && value.length <= MAX_FIELD_LENGTH;
+  const trimmedLength = value.trim().length;
+  return trimmedLength > 0 && trimmedLength <= MAX_FIELD_LENGTH;
 }
 
 interface FlashcardListProps {

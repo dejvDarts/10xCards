@@ -127,9 +127,11 @@ export function useFlashcardList(initialData: ListFlashcardsResponse | null, ini
         await goToPage(1);
       } else {
         setFlashcards((current) => [created, ...current].slice(0, limit));
-        const newTotal = total + 1;
-        setTotal(newTotal);
-        setTotalPages(Math.max(1, Math.ceil(newTotal / limit)));
+        setTotal((t) => {
+          const newTotal = t + 1;
+          setTotalPages(Math.max(1, Math.ceil(newTotal / limit)));
+          return newTotal;
+        });
       }
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "Flashcard creation failed");
