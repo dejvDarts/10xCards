@@ -216,18 +216,18 @@ None — no schema change required.
 
 #### Automated
 
-- [x] 2.1 `npm run lint` passes
-- [x] 2.2 `npm run build` succeeds
+- [x] 2.1 `npm run lint` passes — db3fccf
+- [x] 2.2 `npm run build` succeeds — db3fccf
 
 #### Manual
 
-- [x] 2.3 From an empty collection, "Create manually" opens the form; saving shows the card immediately and clears the empty-state message
-- [x] 2.4 From a non-empty page 1, the toggle button opens the form; saving prepends the card, form clears and stays open, a second save also succeeds
-- [x] 2.5 Saving while on page 2 navigates back to page 1 with the new card visible on top
-- [x] 2.6 Saving with a full 20-item page 1 keeps the visible page at 20 items and updates the page count correctly
-- [x] 2.7 Save stays disabled while either field is empty/whitespace-only; enables once both have content
-- [x] 2.8 A 1,000-character entry saves; a 1,001-character entry is blocked client-side
-- [x] 2.9 A failed save shows the existing red error banner and leaves the draft text in place
-- [x] 2.10 The "New flashcard" Topbar link navigates to `/flashcards` from `/generate` and `/dashboard`
-- [x] 2.11 The "New flashcard" Topbar link also appears and works for a signed-in user on the homepage (`/`)
-- [x] 2.12 No regressions to existing edit/delete/pagination behavior on `/flashcards`
+- [x] 2.3 From an empty collection, "Create manually" opens the form; saving shows the card immediately and clears the empty-state message — db3fccf
+- [x] 2.4 From a non-empty page 1, the toggle button opens the form; saving prepends the card, form clears and stays open, a second save also succeeds — db3fccf
+- [x] 2.5 Saving while on page 2 navigates back to page 1 with the new card visible on top — db3fccf
+- [x] 2.6 Saving with a full 20-item page 1 keeps the visible page at 20 items and updates the page count correctly — db3fccf
+- [x] 2.7 Save stays disabled while either field is empty/whitespace-only; enables once both have content — db3fccf
+- [x] 2.8 A 1,000-character entry saves; a 1,001-character entry is blocked client-side — db3fccf
+- [x] 2.9 A failed save shows the existing red error banner and leaves the draft text in place — db3fccf
+- [x] 2.10 The "New flashcard" Topbar link navigates to `/flashcards` from `/generate` and `/dashboard` — db3fccf
+- [x] 2.11 The "New flashcard" Topbar link also appears and works for a signed-in user on the homepage (`/`) — db3fccf
+- [x] 2.12 No regressions to existing edit/delete/pagination behavior on `/flashcards` — db3fccf
