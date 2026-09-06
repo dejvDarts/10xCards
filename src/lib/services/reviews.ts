@@ -81,11 +81,16 @@ export async function recordReview(
 
   const { card: nextCard } = scheduler.next(toFsrsCard(fetchResult.data), new Date(), rating);
 
+  // Optimistic concurrency: only apply this update if the row is still in the
+  // state we just read. A concurrent review of the same card (double-click,
+  // duplicate retry, two tabs) moves updated_at first and wins the race; this
+  // write then matches zero rows and returns null, same as a not-found card.
   const updateResult = (await supabase
     .from("flashcards")
     .update(toRowUpdate(nextCard))
     .eq("id", flashcardId)
     .eq("user_id", userId)
+    .eq("updated_at", fetchResult.data.updated_at)
     .select()
     .maybeSingle()) as { data: Flashcard | null; error: unknown };
 
