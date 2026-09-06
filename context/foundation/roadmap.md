@@ -47,7 +47,7 @@ Professionals lose too much time creating high-quality learning flashcards by ha
 | S-02 | manual-flashcard-creation   | create a flashcard manually                                                    | F-01          | FR-005                                 | done |
 | S-03 | personal-flashcard-list     | browse their saved flashcards                                                  | S-01          | FR-006                                 | done |
 | S-04 | saved-flashcard-maintenance | edit or delete a saved flashcard                                               | S-03          | FR-007, FR-008                         | done |
-| S-05 | spaced-repetition-session   | study saved flashcards in a review session                                     | S-01, F-02    | FR-009                                 | in-progress |
+| S-05 | spaced-repetition-session   | study saved flashcards in a review session                                     | S-01, F-02    | FR-009                                 | done |
 
 ## Streams
 
@@ -158,7 +158,7 @@ What's already in place in the codebase as of `2026-09-02` (auto-researched + us
 - **Blockers:** —
 - **Unknowns:** — Resolved 2026-09-06 via F-02: `ts-fsrs` (FSRS algorithm) selected. See `context/changes/choose-review-algorithm/research.md`.
 - **Risk:** The review experience depends on selecting the existing algorithm; building a bespoke algorithm would exceed the defined scope.
-- **Status:** in-progress
+- **Status:** done
 
 ## Backlog Handoff
 
@@ -191,6 +191,7 @@ _(none currently open — Q1 "Który gotowy algorytm/biblioteka spaced repetitio
 - **2026-09-03 — F-01 / private-flashcard-storage:** delivered as Phase 1 of S-01 with per-user RLS.
 - **2026-09-06 — F-02 / choose-review-algorithm:** selected `ts-fsrs` (FSRS algorithm) after comparing against SM-2 (`supermemo`) and confirming Cloudflare Workers compatibility. See `context/changes/choose-review-algorithm/`.
 - **2026-09-03 — S-01 / reviewed-ai-flashcards:** paste, generate, review, edit, accept/reject, and private persistence verified end-to-end. Spaced-repetition availability remains in S-05.
+- **S-05: user can study their saved flashcards in a review session driven by an existing spaced-repetition algorithm.** — Archived 2026-09-06 → `context/archive/2026-09-06-spaced-repetition-session/`. Lesson: —.
 - **S-01: user can paste source text, receive flashcard proposals, review each proposal, and save accepted flashcards to their collection.** — Archived 2026-09-03 → `context/archive/2026-09-02-reviewed-ai-flashcards/`. Lesson: —.
 - **S-03: browse their saved flashcards** — Archived 2026-09-04 → `context/archive/2026-09-04-personal-flashcard-list/`. Lesson: —.
 - **S-04: user can edit or delete a flashcard already in their collection.** — Archived 2026-09-05 → `context/archive/2026-09-05-saved-flashcard-maintenance/`. Lesson: —.
