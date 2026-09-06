@@ -1,7 +1,7 @@
 ---
 change_id: spaced-repetition-session
 title: Spaced-repetition review session (S-05)
-status: implementing
+status: implemented
 created: 2026-09-06
 updated: 2026-09-06
 archived_at: null

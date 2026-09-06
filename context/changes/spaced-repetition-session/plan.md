@@ -325,14 +325,14 @@ The new migration file is picked up automatically by the existing CI `deploy` jo
 
 #### Automated
 
-- [x] 4.1 Lint passes: `npm run lint`
-- [x] 4.2 Build passes: `npm run build`
+- [x] 4.1 Lint passes: `npm run lint` — 03abb31
+- [x] 4.2 Build passes: `npm run build` — 03abb31
 
 #### Manual
 
-- [x] 4.3 First due card shows front only until revealed
-- [x] 4.4 Reveal shows back + 4 rating buttons
-- [x] 4.5 Rating advances through the full due queue to the "no cards due" message
-- [x] 4.6 Zero due cards shows the "no cards due" message immediately
-- [x] 4.7 Cross-user isolation holds for the review session
-- [x] 4.8 "Study" link on `/flashcards` navigates to `/flashcards/review`
+- [x] 4.3 First due card shows front only until revealed — 03abb31
+- [x] 4.4 Reveal shows back + 4 rating buttons — 03abb31
+- [x] 4.5 Rating advances through the full due queue to the "no cards due" message — 03abb31
+- [x] 4.6 Zero due cards shows the "no cards due" message immediately — 03abb31
+- [x] 4.7 Cross-user isolation holds for the review session — 03abb31
+- [x] 4.8 "Study" link on `/flashcards` navigates to `/flashcards/review` — 03abb31
