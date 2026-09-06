@@ -290,21 +290,21 @@ The new migration file is picked up automatically by the existing CI `deploy` jo
 
 #### Automated
 
-- [x] 1.1 Lint passes: `npm run lint`
-- [x] 1.2 Build passes: `npm run build`
+- [x] 1.1 Lint passes: `npm run lint` — ae4e2a6
+- [x] 1.2 Build passes: `npm run build` — ae4e2a6
 
 #### Manual
 
-- [x] 1.3 `npx supabase db reset` applies the new migration cleanly
-- [x] 1.4 A pre-existing flashcard shows `due` = reset timestamp and `state = 0` after reset/reapply
+- [x] 1.3 `npx supabase db reset` applies the new migration cleanly — ae4e2a6
+- [x] 1.4 A pre-existing flashcard shows `due` = reset timestamp and `state = 0` after reset/reapply — ae4e2a6
 
 ### Phase 2: FSRS scheduling service
 
 #### Automated
 
-- [ ] 2.1 Lint passes: `npm run lint`
-- [ ] 2.2 Build passes: `npm run build`
-- [ ] 2.3 Type checking passes as part of `npm run build`
+- [x] 2.1 Lint passes: `npm run lint`
+- [x] 2.2 Build passes: `npm run build`
+- [x] 2.3 Type checking passes as part of `npm run build`
 
 ### Phase 3: Review session API
 
