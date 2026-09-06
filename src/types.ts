@@ -5,6 +5,9 @@
 /** Lifecycle status of a flashcard: AI-proposed, user-accepted, or user-rejected. */
 export type FlashcardStatus = "pending" | "accepted" | "rejected";
 
+/** FSRS review state: 0=New, 1=Learning, 2=Review, 3=Relearning. */
+export type ReviewState = 0 | 1 | 2 | 3;
+
 /** A flashcard row as stored in the `flashcards` table. */
 export interface Flashcard {
   id: string;
@@ -15,6 +18,15 @@ export interface Flashcard {
   status: FlashcardStatus;
   created_at: string;
   updated_at: string;
+  due: string;
+  stability: number;
+  difficulty: number;
+  scheduled_days: number;
+  learning_steps: number;
+  reps: number;
+  lapses: number;
+  state: ReviewState;
+  last_review: string | null;
 }
 
 /** Request body for `POST /api/flashcards/generate`. */
@@ -47,4 +59,14 @@ export interface ListFlashcardsResponse {
   limit: number;
   total: number;
   totalPages: number;
+}
+
+/** Response body for `GET /api/flashcards/due`. */
+export interface DueFlashcardsResponse {
+  flashcards: Flashcard[];
+}
+
+/** Request body for `POST /api/flashcards/[id]/review`. */
+export interface SubmitReviewRequest {
+  rating: 1 | 2 | 3 | 4;
 }
