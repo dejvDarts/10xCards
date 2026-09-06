@@ -302,24 +302,24 @@ The new migration file is picked up automatically by the existing CI `deploy` jo
 
 #### Automated
 
-- [x] 2.1 Lint passes: `npm run lint`
-- [x] 2.2 Build passes: `npm run build`
-- [x] 2.3 Type checking passes as part of `npm run build`
+- [x] 2.1 Lint passes: `npm run lint` — 3d3aae5
+- [x] 2.2 Build passes: `npm run build` — 3d3aae5
+- [x] 2.3 Type checking passes as part of `npm run build` — 3d3aae5
 
 ### Phase 3: Review session API
 
 #### Automated
 
-- [ ] 3.1 Lint passes: `npm run lint`
-- [ ] 3.2 Build passes: `npm run build`
+- [x] 3.1 Lint passes: `npm run lint`
+- [x] 3.2 Build passes: `npm run build`
 
 #### Manual
 
-- [ ] 3.3 `GET /api/flashcards/due` returns only due, accepted flashcards for the signed-in user
-- [ ] 3.4 `GET /api/flashcards/due` returns 401 when signed out
-- [ ] 3.5 `POST /api/flashcards/[id]/review` with a valid rating returns 200 with an updated future `due`
-- [ ] 3.6 `POST /api/flashcards/[id]/review` on another user's flashcard returns 404
-- [ ] 3.7 `POST /api/flashcards/[id]/review` with an invalid rating returns 400
+- [x] 3.3 `GET /api/flashcards/due` returns only due, accepted flashcards for the signed-in user
+- [x] 3.4 `GET /api/flashcards/due` returns 401 when signed out
+- [x] 3.5 `POST /api/flashcards/[id]/review` with a valid rating returns 200 with an updated future `due`
+- [x] 3.6 `POST /api/flashcards/[id]/review` on another user's flashcard returns 404
+- [x] 3.7 `POST /api/flashcards/[id]/review` with an invalid rating returns 400
 
 ### Phase 4: Review session UI
 
