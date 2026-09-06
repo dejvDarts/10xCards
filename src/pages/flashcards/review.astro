@@ -1,0 +1,44 @@
+---
+import ReviewSession from "@/components/ReviewSession";
+import Layout from "@/layouts/Layout.astro";
+import Topbar from "@/components/Topbar.astro";
+import { createClient } from "@/lib/supabase";
+import { getDueFlashcards } from "@/lib/services/reviews";
+import type { DueFlashcardsResponse } from "@/types";
+
+// middleware.ts guards PROTECTED_ROUTES (this route matches the "/flashcards"
+// prefix), so `user` is always set here — the `if (user)` below only
+// satisfies the type narrowing.
+const { user } = Astro.locals;
+
+let initialData: DueFlashcardsResponse | null = null;
+let initialError: string | undefined;
+
+const supabase = createClient(Astro.request.headers, Astro.cookies);
+if (!supabase) {
+  initialError = "Supabase is not configured";
+} else if (user) {
+  try {
+    const flashcards = await getDueFlashcards(supabase, user.id);
+    initialData = { flashcards };
+  } catch {
+    initialError = "Failed to load due flashcards";
+  }
+}
+---
+
+<Layout title="Review session">
+  <main class="bg-cosmic min-h-screen px-4 pt-4 pb-12 text-white sm:px-8 sm:pt-8 sm:pb-16">
+    <div class="mx-auto max-w-3xl">
+      <Topbar />
+      <p class="mb-3 text-sm font-medium text-blue-200">Study session</p>
+      <h1 class="text-3xl font-bold sm:text-4xl">Review your due flashcards.</h1>
+      <p class="mt-3 max-w-2xl text-blue-100/75">
+        Reveal each card, rate how well you remembered it, and move to the next.
+      </p>
+      <div class="mt-8">
+        <ReviewSession client:load initialData={initialData} initialError={initialError} />
+      </div>
+    </div>
+  </main>
+</Layout>

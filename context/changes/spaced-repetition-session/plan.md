@@ -310,29 +310,29 @@ The new migration file is picked up automatically by the existing CI `deploy` jo
 
 #### Automated
 
-- [x] 3.1 Lint passes: `npm run lint`
-- [x] 3.2 Build passes: `npm run build`
+- [x] 3.1 Lint passes: `npm run lint` — 27abccb
+- [x] 3.2 Build passes: `npm run build` — 27abccb
 
 #### Manual
 
-- [x] 3.3 `GET /api/flashcards/due` returns only due, accepted flashcards for the signed-in user
-- [x] 3.4 `GET /api/flashcards/due` returns 401 when signed out
-- [x] 3.5 `POST /api/flashcards/[id]/review` with a valid rating returns 200 with an updated future `due`
-- [x] 3.6 `POST /api/flashcards/[id]/review` on another user's flashcard returns 404
-- [x] 3.7 `POST /api/flashcards/[id]/review` with an invalid rating returns 400
+- [x] 3.3 `GET /api/flashcards/due` returns only due, accepted flashcards for the signed-in user — 27abccb
+- [x] 3.4 `GET /api/flashcards/due` returns 401 when signed out — 27abccb
+- [x] 3.5 `POST /api/flashcards/[id]/review` with a valid rating returns 200 with an updated future `due` — 27abccb
+- [x] 3.6 `POST /api/flashcards/[id]/review` on another user's flashcard returns 404 — 27abccb
+- [x] 3.7 `POST /api/flashcards/[id]/review` with an invalid rating returns 400 — 27abccb
 
 ### Phase 4: Review session UI
 
 #### Automated
 
-- [ ] 4.1 Lint passes: `npm run lint`
-- [ ] 4.2 Build passes: `npm run build`
+- [x] 4.1 Lint passes: `npm run lint`
+- [x] 4.2 Build passes: `npm run build`
 
 #### Manual
 
-- [ ] 4.3 First due card shows front only until revealed
-- [ ] 4.4 Reveal shows back + 4 rating buttons
-- [ ] 4.5 Rating advances through the full due queue to the "no cards due" message
-- [ ] 4.6 Zero due cards shows the "no cards due" message immediately
-- [ ] 4.7 Cross-user isolation holds for the review session
-- [ ] 4.8 "Study" link on `/flashcards` navigates to `/flashcards/review`
+- [x] 4.3 First due card shows front only until revealed
+- [x] 4.4 Reveal shows back + 4 rating buttons
+- [x] 4.5 Rating advances through the full due queue to the "no cards due" message
+- [x] 4.6 Zero due cards shows the "no cards due" message immediately
+- [x] 4.7 Cross-user isolation holds for the review session
+- [x] 4.8 "Study" link on `/flashcards` navigates to `/flashcards/review`
