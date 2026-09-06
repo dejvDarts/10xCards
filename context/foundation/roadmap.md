@@ -3,7 +3,7 @@ project: "10xCards"
 version: 1
 status: draft
 created: 2026-09-02
-updated: 2026-09-05
+updated: 2026-09-06
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -42,12 +42,12 @@ Professionals lose too much time creating high-quality learning flashcards by ha
 | ID   | Change ID                   | Outcome (user can ...)                                                         | Prerequisites | PRD refs                               | Status   |
 | ---- | --------------------------- | ------------------------------------------------------------------------------ | ------------- | -------------------------------------- | -------- |
 | F-01 | private-flashcard-storage   | (foundation) private flashcard storage is available to signed-in users         | —             | FR-001, FR-002, NFR: Prywatność danych | done     |
-| F-02 | choose-review-algorithm     | (foundation) an existing review algorithm is selected for the learning session | —             | FR-009                                 | blocked  |
+| F-02 | choose-review-algorithm     | (foundation) an existing review algorithm is selected for the learning session | —             | FR-009                                 | done     |
 | S-01 | reviewed-ai-flashcards      | turn pasted text into reviewed, saved flashcards                               | F-01          | US-01, FR-003, FR-004                  | done     |
 | S-02 | manual-flashcard-creation   | create a flashcard manually                                                    | F-01          | FR-005                                 | done |
 | S-03 | personal-flashcard-list     | browse their saved flashcards                                                  | S-01          | FR-006                                 | done |
 | S-04 | saved-flashcard-maintenance | edit or delete a saved flashcard                                               | S-03          | FR-007, FR-008                         | done |
-| S-05 | spaced-repetition-session   | study saved flashcards in a review session                                     | S-01, F-02    | FR-009                                 | blocked  |
+| S-05 | spaced-repetition-session   | study saved flashcards in a review session                                     | S-01, F-02    | FR-009                                 | in-progress |
 
 ## Streams
 
@@ -94,10 +94,9 @@ What's already in place in the codebase as of `2026-09-02` (auto-researched + us
 - **Prerequisites:** —
 - **Parallel with:** F-01
 - **Blockers:** —
-- **Unknowns:**
-  - Which existing spaced-repetition algorithm will drive review sessions? — Owner: user. Block: yes.
+- **Unknowns:** — Resolved 2026-09-06: `ts-fsrs` (FSRS algorithm) selected. See `context/changes/choose-review-algorithm/research.md`.
 - **Risk:** Resolve this decision before planning the learning session so its behavior is not designed around an unstated algorithm.
-- **Status:** blocked
+- **Status:** done
 
 ## Slices
 
@@ -157,17 +156,16 @@ What's already in place in the codebase as of `2026-09-02` (auto-researched + us
 - **Prerequisites:** S-01, F-02
 - **Parallel with:** —
 - **Blockers:** —
-- **Unknowns:**
-  - Which existing spaced-repetition algorithm will drive review sessions? — Owner: user. Block: yes.
+- **Unknowns:** — Resolved 2026-09-06 via F-02: `ts-fsrs` (FSRS algorithm) selected. See `context/changes/choose-review-algorithm/research.md`.
 - **Risk:** The review experience depends on selecting the existing algorithm; building a bespoke algorithm would exceed the defined scope.
-- **Status:** blocked
+- **Status:** in-progress
 
 ## Backlog Handoff
 
 | Roadmap ID | Change ID                   | Suggested issue title                    | Ready for `/10x-plan` | Notes                           |
 | ---------- | --------------------------- | ---------------------------------------- | --------------------- | ------------------------------- |
 | F-01       | private-flashcard-storage   | Establish private flashcard storage      | no                    | Completed within S-01 Phase 1   |
-| F-02       | choose-review-algorithm     | Select the review algorithm              | no                    | Resolve Open Roadmap Question 1 |
+| F-02       | choose-review-algorithm     | Select the review algorithm              | no                    | Resolved 2026-09-06 — ts-fsrs    |
 | S-01       | reviewed-ai-flashcards      | Let users review AI-generated flashcards | no                    | Completed 2026-09-03            |
 | S-02       | manual-flashcard-creation   | Let users create flashcards manually     | no                    | Requires F-01                   |
 | S-03       | personal-flashcard-list     | Let users browse personal flashcards     | no                    | Requires S-01                   |
@@ -176,7 +174,7 @@ What's already in place in the codebase as of `2026-09-02` (auto-researched + us
 
 ## Open Roadmap Questions
 
-1. **Który gotowy algorytm/biblioteka spaced repetition zostanie wykorzystany do FR-009?** — Owner: user. Block: S-05.
+_(none currently open — Q1 "Który gotowy algorytm/biblioteka spaced repetition zostanie wykorzystany do FR-009?" resolved 2026-09-06 via F-02: `ts-fsrs` selected)_
 
 ## Parked
 
@@ -191,6 +189,7 @@ What's already in place in the codebase as of `2026-09-02` (auto-researched + us
 ## Done
 
 - **2026-09-03 — F-01 / private-flashcard-storage:** delivered as Phase 1 of S-01 with per-user RLS.
+- **2026-09-06 — F-02 / choose-review-algorithm:** selected `ts-fsrs` (FSRS algorithm) after comparing against SM-2 (`supermemo`) and confirming Cloudflare Workers compatibility. See `context/changes/choose-review-algorithm/`.
 - **2026-09-03 — S-01 / reviewed-ai-flashcards:** paste, generate, review, edit, accept/reject, and private persistence verified end-to-end. Spaced-repetition availability remains in S-05.
 - **S-01: user can paste source text, receive flashcard proposals, review each proposal, and save accepted flashcards to their collection.** — Archived 2026-09-03 → `context/archive/2026-09-02-reviewed-ai-flashcards/`. Lesson: —.
 - **S-03: browse their saved flashcards** — Archived 2026-09-04 → `context/archive/2026-09-04-personal-flashcard-list/`. Lesson: —.
