@@ -602,13 +602,13 @@ confirmation before the change is considered complete and handed to `/10x-archiv
 
 #### Automated
 
-- [x] 3.1 `npm run test:integration` exits 0 with both integration suites passing
-- [x] 3.2 Each of the six routes has both a no-session (`401`) and a valid-session (non-`401`) case
-- [x] 3.3 The "not a redirect" assertion passes
-- [x] 3.4 `npm test`, `npm run lint`, `npm run build` all still pass
+- [x] 3.1 `npm run test:integration` exits 0 with both integration suites passing — e91d417
+- [x] 3.2 Each of the six routes has both a no-session (`401`) and a valid-session (non-`401`) case — e91d417
+- [x] 3.3 The "not a redirect" assertion passes — e91d417
+- [x] 3.4 `npm test`, `npm run lint`, `npm run build` all still pass — e91d417
 
 #### Manual
 
-- [x] 3.5 Deleting the `401` guard from `due.ts` makes exactly that route's no-session test fail
-- [x] 3.6 Clean-checkout sequence (`npm ci` → `astro sync` → `supabase start` → `npm test` → `npm run test:integration`) is all green
-- [x] 3.7 A new contributor can run the suite from the README instructions alone
+- [x] 3.5 Deleting the `401` guard from `due.ts` makes exactly that route's no-session test fail — e91d417
+- [x] 3.6 Clean-checkout sequence (`npm ci` → `astro sync` → `supabase start` → `npm test` → `npm run test:integration`) is all green — e91d417
+- [x] 3.7 A new contributor can run the suite from the README instructions alone — e91d417
