@@ -55,6 +55,32 @@ npm run dev
 - `npm run lint` - Run ESLint with type-checked rules
 - `npm run lint:fix` - Auto-fix ESLint issues
 - `npm run format` - Run Prettier
+- `npm test` - Run unit tests (Vitest, no external dependencies)
+- `npm run test:watch` - Run unit tests in watch mode
+- `npm run test:integration` - Run integration tests (requires a running local Supabase)
+
+## Testing
+
+Unit tests live next to the code as `src/**/*.test.ts` and run with no external
+dependencies:
+
+```bash
+npm test
+```
+
+Integration tests live in `tests/integration/` and exercise the real API route
+handlers against a **local Supabase** instance (access-control coverage for
+cross-user isolation and auth gating). Start the stack first:
+
+```bash
+npx supabase start        # Docker required — see Supabase Configuration below
+npm run test:integration
+```
+
+The integration harness reads the local Supabase URL and keys from
+`npx supabase status`; if the stack is not running the suite fails fast with a
+clear message. Test users are created and torn down per run (email prefix
+`test+cpc-`), so no manual cleanup is needed.
 
 ## Project Structure
 

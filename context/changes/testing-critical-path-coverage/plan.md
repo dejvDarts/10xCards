@@ -585,30 +585,30 @@ confirmation before the change is considered complete and handed to `/10x-archiv
 
 #### Automated
 
-- [x] 2.1 `npx supabase start` then `npm run test:integration` exits 0 with the cross-user suite all passing
-- [x] 2.2 The RLS-layer suite (`flashcards.rls.test.ts`) passes: user B's session-scoped client sees/mutates zero of user A's rows; user A's client succeeds
-- [x] 2.3 Positive-control cases pass (owner can operate on own card)
-- [x] 2.4 `npm test` (unit) still exits 0 and still needs no Docker
-- [x] 2.5 `npm run lint` passes over `tests/**`
+- [x] 2.1 `npx supabase start` then `npm run test:integration` exits 0 with the cross-user suite all passing — 44eba5a
+- [x] 2.2 The RLS-layer suite (`flashcards.rls.test.ts`) passes: user B's session-scoped client sees/mutates zero of user A's rows; user A's client succeeds — 44eba5a
+- [x] 2.3 Positive-control cases pass (owner can operate on own card) — 44eba5a
+- [x] 2.4 `npm test` (unit) still exits 0 and still needs no Docker — 44eba5a
+- [x] 2.5 `npm run lint` passes over `tests/**` — 44eba5a
 
 #### Manual
 
-- [x] 2.6 `alter table flashcards disable row level security` makes the RLS-layer suite fail; re-enabling it makes the suite pass again
-- [x] 2.7 Removing `.eq("user_id", user.id)` from the PATCH handler fails no test — RLS masks it — and that is the accepted limitation recorded in Open Risks / test-plan §6.6
-- [x] 2.8 Running `test:integration` twice leaves no leftover `test+*` users in `auth.users`
-- [x] 2.9 Stopping Supabase makes `test:integration` fail fast with the health-check message
+- [x] 2.6 `alter table flashcards disable row level security` makes the RLS-layer suite fail; re-enabling it makes the suite pass again — 44eba5a
+- [x] 2.7 Removing `.eq("user_id", user.id)` from the PATCH handler fails no test — RLS masks it — and that is the accepted limitation recorded in Open Risks / test-plan §6.6 — 44eba5a
+- [x] 2.8 Running `test:integration` twice leaves no leftover `test+*` users in `auth.users` — 44eba5a
+- [x] 2.9 Stopping Supabase makes `test:integration` fail fast with the health-check message — 44eba5a
 
 ### Phase 3: Risk #4 API-Route Gating (Integration)
 
 #### Automated
 
-- [ ] 3.1 `npm run test:integration` exits 0 with both integration suites passing
-- [ ] 3.2 Each of the six routes has both a no-session (`401`) and a valid-session (non-`401`) case
-- [ ] 3.3 The "not a redirect" assertion passes
-- [ ] 3.4 `npm test`, `npm run lint`, `npm run build` all still pass
+- [x] 3.1 `npm run test:integration` exits 0 with both integration suites passing
+- [x] 3.2 Each of the six routes has both a no-session (`401`) and a valid-session (non-`401`) case
+- [x] 3.3 The "not a redirect" assertion passes
+- [x] 3.4 `npm test`, `npm run lint`, `npm run build` all still pass
 
 #### Manual
 
-- [ ] 3.5 Deleting the `401` guard from `due.ts` makes exactly that route's no-session test fail
-- [ ] 3.6 Clean-checkout sequence (`npm ci` → `astro sync` → `supabase start` → `npm test` → `npm run test:integration`) is all green
-- [ ] 3.7 A new contributor can run the suite from the README instructions alone
+- [x] 3.5 Deleting the `401` guard from `due.ts` makes exactly that route's no-session test fail
+- [x] 3.6 Clean-checkout sequence (`npm ci` → `astro sync` → `supabase start` → `npm test` → `npm run test:integration`) is all green
+- [x] 3.7 A new contributor can run the suite from the README instructions alone
