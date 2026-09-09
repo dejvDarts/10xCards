@@ -57,7 +57,9 @@ plan's declared set (change folder, `test-plan.md`, `reviews.ts` +export ×3,
 - **Fix**: Add a short "Implementation Notes (deviations)" section to `plan.md`
   covering the two corrections, or leave it for `/10x-archive` to capture in the
   Done entry.
-- **Decision**: PENDING
+- **Decision**: FIXED — added an "## Implementation Notes (deviations)" section to
+  `plan.md` covering the guard-contract stub, the race non-interleave branch
+  (`reps === 2`), and the Phase-3 conditional `fetch` mock.
 
 ### F2 — generate-smoke captures `realFetch` at module load, assuming no prior fetch spy
 
@@ -76,4 +78,6 @@ plan's declared set (change folder, `test-plan.md`, `reviews.ts` +export ×3,
 - **Fix**: Capture `realFetch` inside `mockProvider` (or `beforeAll`) after
   `expect(vi.isMockFunction(globalThis.fetch)).toBe(false)`, so a poisoned global
   fails loudly instead of silently delegating.
-- **Decision**: PENDING
+- **Decision**: FIXED — `realFetch` is now captured inside `mockProvider`, guarded
+  by `expect(vi.isMockFunction(globalThis.fetch)).toBe(false)`. lint + 37/37
+  integration still green.

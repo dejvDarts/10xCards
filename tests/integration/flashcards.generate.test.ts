@@ -11,7 +11,6 @@ import { resetFlashcards } from "./helpers/db";
 // openrouter.ai — and let everything else hit the real local Supabase. Mocking
 // astro:env/server is avoided on purpose (it would null SUPABASE_* and break the
 // real DB insert). Relies on .dev.vars carrying OPENROUTER_API_KEY.
-const realFetch = globalThis.fetch.bind(globalThis);
 const suite = OPENROUTER_API_KEY ? describe : describe.skip;
 
 const SOURCE = "x".repeat(200);
@@ -38,6 +37,11 @@ let fetchSpy: ReturnType<typeof vi.spyOn>;
 
 /** Intercept openrouter.ai with `handler`; pass every other request through. */
 function mockProvider(handler: () => Promise<Response> | Response) {
+  // Capture the real fetch now, after asserting it hasn't already been spied by
+  // another integration file that forgot to restore — otherwise the pass-through
+  // below would silently route Supabase auth into a stale mock.
+  expect(vi.isMockFunction(globalThis.fetch), "globalThis.fetch already mocked before this suite").toBe(false);
+  const realFetch = globalThis.fetch.bind(globalThis);
   fetchSpy = vi.spyOn(globalThis, "fetch").mockImplementation((input, init) => {
     if (urlOf(input).includes(OPENROUTER)) return Promise.resolve(handler());
     return realFetch(input, init);

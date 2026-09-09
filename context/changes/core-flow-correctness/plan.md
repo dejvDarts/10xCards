@@ -29,7 +29,7 @@ plus one route integration smoke.
   code comment `reviews.ts:5-8`).
 - **`getDueFlashcards` has two production callers:** `src/pages/api/flashcards/due.ts:22`
   and `src/pages/flashcards/review.astro:22` (SSR page calls the service directly). Testing
-  the *service* covers both.
+  the _service_ covers both.
 - **`recordReview` returns `null` for two distinct reasons**, both surfaced as HTTP 404 by
   the route: row not found / not owned / not `accepted` (`reviews.ts:78-80`), and a lost
   optimistic-concurrency race (`reviews.ts:88-95` → 0 rows). No DB trigger maintains
@@ -73,9 +73,9 @@ plus one route integration smoke.
 
 - Oracle-safe FSRS assertions (structurally enforced by ts-fsrs, parameter-independent):
   strict interval ordering `Again<Hard<Good<Easy` (`index.mjs:1266-1269` `Math.max(hard,
-  again+1)` etc.), `reps += 1` per `next()` (`:370`), `state` New(0)→Review(2) for every
+again+1)` etc.), `reps += 1` per `next()` (`:370`), `state` New(0)→Review(2) for every
   rating in this config (`:1282-1291`), interval floor `≥ 1` day (`:830-836`), `due =
-  now + ≥1·86_400_000 ms` (`:115-118`).
+now + ≥1·86_400_000 ms` (`:115-118`).
 - **Do NOT assert** exact day counts (1/2/3/8) or `stability`/`difficulty` values —
   parameter-dependent, could shift on a ts-fsrs `^5.4.2` minor bump.
 - Rating literals `1|2|3|4` map 1:1 to ts-fsrs `Rating.Again|Hard|Good|Easy` with no remap
@@ -97,7 +97,7 @@ plus one route integration smoke.
   deadlines are a separate change.
 - **Not** writing a cross-flow generate → accept → review test. Each risk's suite stays
   self-contained; the `pending`→`accepted` seam is documented, not a top risk.
-- **Not** testing `review.astro` page rendering. The `getDueFlashcards` *service* tests
+- **Not** testing `review.astro` page rendering. The `getDueFlashcards` _service_ tests
   cover both its callers; page render is out of scope (test-plan §6.3, Phase-1 precedent).
 - **Not** adding a "not-yet-due card is still reviewable" test (impl-review F4 accepted
   gap) — tangential to Risk #2's statement, and it tests behavior nobody has asked to
@@ -159,7 +159,7 @@ one additive change to a test helper.
   module and nulls `SUPABASE_URL`/`SUPABASE_KEY`, so `createClient` returns `null` and the
   route 500s instead of inserting. `.dev.vars` already carries a real `OPENROUTER_API_KEY`,
   so the happy path needs no env control; env-mocking for branch 1 (missing key) lives in
-  the *unit* test, which has no DB. `fileParallelism` is already off. Verify the `fetch`
+  the _unit_ test, which has no DB. `fileParallelism` is already off. Verify the `fetch`
   spy does not bleed into the other integration files (run the whole `integration`
   project, not just this file).
 
@@ -169,8 +169,8 @@ one additive change to a test helper.
   exception is the guard-contract test, which passes a **stub object as `recordReview`'s
   `supabase` argument** — that is dependency injection at the external boundary, not a
   `vi.mock` of `@/lib/services/*`. The chainable stub only needs `.from().select().eq()
-  .eq().eq().maybeSingle()` (returns a row) and `.from().update().eq().eq().eq().select()
-  .maybeSingle()` (returns `{ data: null }`).
+.eq().eq().maybeSingle()` (returns a row) and `.from().update().eq().eq().eq().select()
+.maybeSingle()` (returns `{ data: null }`).
 
 ## Phase 1: Risk #2 — FSRS Scheduling Unit Coverage
 
@@ -181,7 +181,7 @@ fast, Docker-free unit tests, and the load-bearing `enable_short_term: false` ch
 guarded.
 
 **Deliberate overlap with Phase 2:** the rating-ordering, `reps +1`, `state 0→2`, `due >
-now`, and `enable_short_term` regressions are *also* observable through Phase 2's real
+now`, and `enable_short_term` regressions are _also_ observable through Phase 2's real
 read-back (a short-term "Again" schedules ~1 min out → the card stays in the due list →
 Phase 2's "absent after Again" assertion fails). This unit tier is the fast, Docker-free,
 ts-fsrs-bump-resilient layer plus the mapping round-trip in isolation — not the sole guard.
@@ -231,7 +231,7 @@ without reproducing ts-fsrs arithmetic.
   argument (dependency injection at the boundary — not a `vi.mock` of an internal module)
   whose `.select()…maybeSingle()` returns a valid `accepted` row and whose guarded
   `.update()…eq("updated_at", …).select().maybeSingle()` resolves `{ data: null, error:
-  null }`; assert `recordReview` returns `null` (the "lost the race" path, which the route
+null }`; assert `recordReview` returns `null` (the "lost the race" path, which the route
   maps to 404 — same as not-found). This pins the guard deterministically; the true
   `Promise.all` race in Phase 2 is a best-effort supplement, not the contract's proof.
 
@@ -308,7 +308,7 @@ direction, no in-session requeue, the concurrency guard, and stable ordering.
   interleave, assert exactly one 200 + one 404 `{"error":"Flashcard not found"}` and
   `reps === 1` on read-back. If the run does not produce a race (handler 1 commits before
   handler 2's SELECT — possible under Vitest), the test asserts only the weaker invariant
-  `reps === 1` (no double-apply) and logs that it did not race. The guard's *contract* is
+  `reps === 1` (no double-apply) and logs that it did not race. The guard's _contract_ is
   proven deterministically by the Phase-1 guard-contract unit test; this is a supplement.
 - **Due-list ordering tie**: seed 3 `accepted` cards — two with an **identical** past `due`,
   one earlier — via the extended `seedFlashcard`; `getDueFlashcards` → order is `due` asc,
@@ -319,7 +319,7 @@ direction, no in-session requeue, the concurrency guard, and stable ordering.
 #### Automated Verification:
 
 - `npx supabase start` then `npm run test:integration` exits 0 with
-  `flashcards.review.test.ts` all passing (the best-effort race case never *fails* the run —
+  `flashcards.review.test.ts` all passing (the best-effort race case never _fails_ the run —
   it asserts the weaker `reps === 1` invariant when it does not race)
 - `npm test` (unit) still exits 0 and still needs no Docker, and the Phase-1
   guard-contract unit test is present and passing
@@ -362,15 +362,15 @@ and document the absence of an application-level timeout.
 `afterEach(() => vi.restoreAllMocks())`. One test per branch, asserting the thrown
 `FlashcardGenerationError` message string:
 
-| Branch | `fetch` mock (or env) | Expected message |
-|---|---|---|
-| 1 missing key | env mock returns falsy `OPENROUTER_API_KEY` | `OPENROUTER_API_KEY is not configured` |
-| 2 unreachable | `mockRejectedValueOnce(new TypeError("fetch failed"))` | `Failed to reach the AI provider` |
-| 3 provider error | `new Response("x", { status: 429 })` | `AI provider returned an error (status 429)` |
-| 4 invalid envelope JSON | `new Response("<html>", { status: 200 })` | `AI provider returned an invalid JSON response` |
-| 5 missing content | `{"choices":[]}` / `{"choices":[{"message":{"content":""}}]}` | `AI provider response was missing message content` |
-| 6 content not JSON | `content: "not json"` | `AI provider content was not valid JSON` |
-| 7 wrong shape | `content` = `{"flashcards":[]}` / 16 items / blank `front` | `AI provider output did not match the expected flashcard shape` |
+| Branch                  | `fetch` mock (or env)                                         | Expected message                                                |
+| ----------------------- | ------------------------------------------------------------- | --------------------------------------------------------------- |
+| 1 missing key           | env mock returns falsy `OPENROUTER_API_KEY`                   | `OPENROUTER_API_KEY is not configured`                          |
+| 2 unreachable           | `mockRejectedValueOnce(new TypeError("fetch failed"))`        | `Failed to reach the AI provider`                               |
+| 3 provider error        | `new Response("x", { status: 429 })`                          | `AI provider returned an error (status 429)`                    |
+| 4 invalid envelope JSON | `new Response("<html>", { status: 200 })`                     | `AI provider returned an invalid JSON response`                 |
+| 5 missing content       | `{"choices":[]}` / `{"choices":[{"message":{"content":""}}]}` | `AI provider response was missing message content`              |
+| 6 content not JSON      | `content: "not json"`                                         | `AI provider content was not valid JSON`                        |
+| 7 wrong shape           | `content` = `{"flashcards":[]}` / 16 items / blank `front`    | `AI provider output did not match the expected flashcard shape` |
 
 Plus: **happy path** → `content` = `'{"flashcards":[{"front":"Q","back":"A"}]}'` → returns
 `[{front:"Q", back:"A"}]`, and `fetch` was called with `OPENROUTER_URL` + a Bearer header.
@@ -497,6 +497,27 @@ confirmation of the manual checks before the change is considered complete.
   (visibility only). One additive change to `tests/integration/helpers/db.ts`. Everything
   else is new test files + `test-plan.md` doc edits.
 - No new dependencies — `vitest`, `@supabase/*`, `ts-fsrs`, `zod` are all already present.
+
+## Implementation Notes (deviations)
+
+Corrections made during `/10x-implement` that this plan's prose above still describes the
+old way — the code is authoritative:
+
+1. **Guard-contract stub (Phase 1 change #2).** The stub does not merely "resolve
+   `{ data: null }`" on the update chain. It tracks whether `.eq("updated_at", …)` was
+   called and returns `null` only when that guard clause is present-but-stale; an unguarded
+   update matches. So **removing `.eq("updated_at", …)` from `recordReview` turns the
+   "lost the race" test red** — which is what makes manual check 2.6 meaningful. (Upgraded
+   in Phase 2 once 2.6 was found to be a no-op against the simpler stub.)
+2. **Concurrency-race non-interleave branch (Phase 2 change #2).** When the two `Promise.all`
+   review handlers run sequentially instead of interleaving, both are legitimate reviews and
+   both apply, so the test asserts **`reps === 2`**, not the "`reps === 1`" the plan text
+   says. The `reps === 1` assertion holds only in the interleaved (`1×200 + 1×404`) branch.
+3. **Phase-3 route-smoke `fetch` mock (Phase 3 change #2).** A plain `mockResolvedValueOnce`
+   consumes the handler's _first_ outbound call, which is Supabase auth (`getUser` →
+   `/auth/v1/user`), not the OpenRouter call. The smoke uses a conditional
+   `mockImplementation` that intercepts only `openrouter.ai` and passes everything else
+   through to the real local stack.
 
 ## References
 
