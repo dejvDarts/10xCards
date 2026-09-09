@@ -1,7 +1,7 @@
 ---
 change_id: testing-critical-path-coverage
 title: Bootstrap test suite and cover cross-user access and auth-gating risks
-status: implemented
+status: impl_reviewed
 created: 2026-09-09
 updated: 2026-09-09
 archived_at: null
