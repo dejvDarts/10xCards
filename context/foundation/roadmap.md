@@ -3,7 +3,7 @@ project: "10xCards"
 version: 1
 status: draft
 created: 2026-09-02
-updated: 2026-09-06
+updated: 2026-09-09
 prd_version: 1
 main_goal: speed
 top_blocker: time
@@ -196,3 +196,4 @@ _(none currently open — Q1 "Który gotowy algorytm/biblioteka spaced repetitio
 - **S-03: browse their saved flashcards** — Archived 2026-09-04 → `context/archive/2026-09-04-personal-flashcard-list/`. Lesson: —.
 - **S-04: user can edit or delete a flashcard already in their collection.** — Archived 2026-09-05 → `context/archive/2026-09-05-saved-flashcard-maintenance/`. Lesson: —.
 - **S-02: user can create a front-and-back flashcard without pasted source text.** — Archived 2026-09-05 → `context/archive/2026-09-05-manual-flashcard-creation/`. Lesson: —.
+- **F-02: (foundation) an existing review algorithm is selected for the learning session.** — Archived 2026-09-09 → `context/archive/2026-09-06-choose-review-algorithm/`. Lesson: —.
