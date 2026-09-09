@@ -89,7 +89,7 @@ orchestrator updates Status as artifacts appear on disk.
 | #   | Phase name                     | Goal (one line)                                                            | Risks covered | Test types              | Status      | Change folder                                                |
 | --- | ------------------------------ | -------------------------------------------------------------------------- | ------------- | ----------------------- | ----------- | ------------------------------------------------------------ |
 | 1   | Critical-path coverage         | Bootstrap the test runner and defend the two access-control risks first    | #1, #4        | unit + integration      | complete    | `context/archive/2026-09-09-testing-critical-path-coverage/` |
-| 2   | Core flow correctness          | Defend the two must-have flows: the study loop and AI generation           | #2, #3        | unit + integration      | not started | —                                                            |
+| 2   | Core flow correctness          | Defend the two must-have flows: the study loop and AI generation           | #2, #3        | unit + integration      | complete    | `context/archive/2026-09-09-core-flow-correctness/`          |
 | 3   | Client-state & input hardening | Defend UI-state integrity after mutations and server-side input validation | #5, #6        | integration + component | not started | —                                                            |
 | 4   | Quality-gates wiring           | Add the test suite to CI alongside the existing lint + build gates         | cross-cutting | gates                   | not started | —                                                            |
 
