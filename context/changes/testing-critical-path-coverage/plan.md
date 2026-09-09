@@ -570,33 +570,33 @@ confirmation before the change is considered complete and handed to `/10x-archiv
 
 #### Automated
 
-- [x] 1.1 The `astro:*` resolution spike (change #0) passes — natively or via the documented `resolve.alias` shim — and the spike file is deleted before Phase 1 completes
-- [x] 1.2 `npm test` exits 0 with the middleware suite reporting > 0 passing tests
-- [x] 1.3 `npm run lint` passes (new config + test file type-check clean)
-- [x] 1.4 `npm run build` still passes
-- [x] 1.5 `npm test` succeeds with no Docker / `supabase` process running
+- [x] 1.1 The `astro:*` resolution spike (change #0) passes — natively or via the documented `resolve.alias` shim — and the spike file is deleted before Phase 1 completes — e589e87
+- [x] 1.2 `npm test` exits 0 with the middleware suite reporting > 0 passing tests — e589e87
+- [x] 1.3 `npm run lint` passes (new config + test file type-check clean) — e589e87
+- [x] 1.4 `npm run build` still passes — e589e87
+- [x] 1.5 `npm test` succeeds with no Docker / `supabase` process running — e589e87
 
 #### Manual
 
-- [x] 1.6 Removing `/generate` from `PROTECTED_ROUTES` makes `npm test` fail
-- [x] 1.7 `npx vitest` watch mode picks up `src/middleware.test.ts`
+- [x] 1.6 Removing `/generate` from `PROTECTED_ROUTES` makes `npm test` fail — e589e87
+- [x] 1.7 `npx vitest` watch mode picks up `src/middleware.test.ts` — e589e87
 
 ### Phase 2: Integration Harness + Risk #1 Cross-User Isolation
 
 #### Automated
 
-- [ ] 2.1 `npx supabase start` then `npm run test:integration` exits 0 with the cross-user suite all passing
-- [ ] 2.2 The RLS-layer suite (`flashcards.rls.test.ts`) passes: user B's session-scoped client sees/mutates zero of user A's rows; user A's client succeeds
-- [ ] 2.3 Positive-control cases pass (owner can operate on own card)
-- [ ] 2.4 `npm test` (unit) still exits 0 and still needs no Docker
-- [ ] 2.5 `npm run lint` passes over `tests/**`
+- [x] 2.1 `npx supabase start` then `npm run test:integration` exits 0 with the cross-user suite all passing
+- [x] 2.2 The RLS-layer suite (`flashcards.rls.test.ts`) passes: user B's session-scoped client sees/mutates zero of user A's rows; user A's client succeeds
+- [x] 2.3 Positive-control cases pass (owner can operate on own card)
+- [x] 2.4 `npm test` (unit) still exits 0 and still needs no Docker
+- [x] 2.5 `npm run lint` passes over `tests/**`
 
 #### Manual
 
-- [ ] 2.6 `alter table flashcards disable row level security` makes the RLS-layer suite fail; re-enabling it makes the suite pass again
-- [ ] 2.7 Removing `.eq("user_id", user.id)` from the PATCH handler fails no test — RLS masks it — and that is the accepted limitation recorded in Open Risks / test-plan §6.6
-- [ ] 2.8 Running `test:integration` twice leaves no leftover `test+*` users in `auth.users`
-- [ ] 2.9 Stopping Supabase makes `test:integration` fail fast with the health-check message
+- [x] 2.6 `alter table flashcards disable row level security` makes the RLS-layer suite fail; re-enabling it makes the suite pass again
+- [x] 2.7 Removing `.eq("user_id", user.id)` from the PATCH handler fails no test — RLS masks it — and that is the accepted limitation recorded in Open Risks / test-plan §6.6
+- [x] 2.8 Running `test:integration` twice leaves no leftover `test+*` users in `auth.users`
+- [x] 2.9 Stopping Supabase makes `test:integration` fail fast with the health-check message
 
 ### Phase 3: Risk #4 API-Route Gating (Integration)
 

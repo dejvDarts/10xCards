@@ -11,7 +11,8 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "test": "vitest run --project unit",
-    "test:watch": "vitest --project unit"
+    "test:watch": "vitest --project unit",
+    "test:integration": "vitest run --project integration"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.8",

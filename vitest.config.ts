@@ -27,6 +27,9 @@ export default getViteConfig({
           name: "integration",
           environment: "node",
           include: ["tests/integration/**/*.test.ts"],
+          setupFiles: ["tests/integration/setup.ts"],
+          // Integration tests share a single local DB — run files serially.
+          fileParallelism: false,
         },
       },
     ],

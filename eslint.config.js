@@ -68,6 +68,20 @@ const astroConfig = tseslint.config({
   },
 });
 
+// Test helpers interface with deliberately loose third-party generics
+// (supabase-js) and query results typed as `any`; the strict type-checked
+// unsafe-* rules are noise there. Scoped to test code only.
+const testConfig = tseslint.config({
+  files: ["tests/**/*.{ts,tsx}", "src/**/*.test.{ts,tsx}"],
+  rules: {
+    "@typescript-eslint/no-unsafe-return": "off",
+    "@typescript-eslint/no-unsafe-assignment": "off",
+    "@typescript-eslint/no-unsafe-member-access": "off",
+    "@typescript-eslint/no-unsafe-argument": "off",
+    "@typescript-eslint/no-unsafe-call": "off",
+  },
+});
+
 export default tseslint.config(
   includeIgnoreFile(gitignorePath),
   baseConfig,
@@ -75,5 +89,6 @@ export default tseslint.config(
   eslintPluginAstro.configs["flat/recommended"],
   ...eslintPluginAstro.configs["flat/jsx-a11y-recommended"],
   astroConfig,
+  testConfig,
   eslintPluginPrettier,
 );
