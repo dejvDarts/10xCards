@@ -20,17 +20,17 @@ instance with two distinct authenticated users, invoking the route handlers dire
   `preview`, `astro`, `lint`, `lint:fix`, `format`. No `vitest`/`jest`/`playwright`
   dependency, no `*.test.*`/`*.spec.*` files anywhere under `src/` or the repo root.
 - **Risk #1 is enforced twice on every flashcard route that reads or mutates an existing
-  row:** an app-level `.eq("user_id", user.id)` filter *and* a matching per-operation RLS
+  row:** an app-level `.eq("user_id", user.id)` filter _and_ a matching per-operation RLS
   policy (`user_id = auth.uid()`). The Supabase client is always session-scoped (anon key +
   request cookies via `@supabase/ssr`), never service-role, so RLS genuinely evaluates as
   the requesting user. A cross-user PATCH/DELETE/review returns **404, not 403** — both the
   app filter (`.eq(...)` then `!result.data`) and RLS (non-owned row is invisible) produce
   "not found".
 - **Risk #4 is two structurally different mechanisms:**
-  - *Pages* — `src/middleware.ts` `onRequest` does `PROTECTED_ROUTES.some(r => pathname.startsWith(r))`
+  - _Pages_ — `src/middleware.ts` `onRequest` does `PROTECTED_ROUTES.some(r => pathname.startsWith(r))`
     (`["/dashboard", "/generate", "/flashcards"]`); if matched and no `locals.user`, it
     returns `context.redirect("/auth/signin")` (302).
-  - *API routes* — `/api/**` never matches `PROTECTED_ROUTES`, so middleware provides zero
+  - _API routes_ — `/api/**` never matches `PROTECTED_ROUTES`, so middleware provides zero
     enforcement there. Each flashcard API handler independently repeats
     `const { data: { user } } = await supabase.auth.getUser(); if (!user) return jsonError("Unauthorized", 401);`
     (a local, per-file `jsonError`). Observable outcome: `401` JSON body `{"error":"Unauthorized"}`, no redirect.
@@ -95,7 +95,7 @@ instance with two distinct authenticated users, invoking the route handlers dire
   6 production handlers inside a coverage phase expands blast radius (test-plan §7).
   Tests assert the guard per route instead.
 - **Not** adding a page-level fallback auth guard to `dashboard.astro`. This plan
-  *recommends* it as a follow-up change (see Open Risks) but does not implement it —
+  _recommends_ it as a follow-up change (see Open Risks) but does not implement it —
   testing existing behavior does not require changing it.
 - **Not** covering Risks #2, #3, #5, #6 (later rollout phases).
 - **Not** giving `due.ts` / `generate.ts` explicit cross-user tests this phase.
@@ -126,7 +126,7 @@ Three phases, each shipping usable coverage and adding dependencies only when fi
    cookie-harvest session helper, per-test `flashcards` reset). Cover the #1 risk — the
    highest-ranked — the moment the harness exists, with positive controls as the oracle.
 3. **Risk #4 API-route gating (integration).** Reuse the Phase 2 harness to assert the
-   *other* auth mechanism: `401 {"error":"Unauthorized"}` (not a redirect) for
+   _other_ auth mechanism: `401 {"error":"Unauthorized"}` (not a redirect) for
    unauthenticated flashcard API calls, and that a valid session is never blocked.
 
 Integration tests invoke route handler functions directly with a crafted `APIContext`
@@ -244,6 +244,7 @@ config rejects test globals. No new tsconfig unless lint fails.
 `auth.getUser()` resolves `{ data: { user } }` with `user` toggled per test. Call the
 exported `onRequest(context, next)` with a minimal context (`url` as a `URL`, `request`,
 `cookies` stub, `locals: {}`, `redirect: vi.fn()`) and `next: vi.fn()`. Assert:
+
 - unauthenticated + path starting with each of `/dashboard`, `/generate`, `/flashcards`
   (incl. a sub-path like `/flashcards/review`) → `context.redirect` called with
   `/auth/signin`, `next` not called;
@@ -361,6 +362,7 @@ prove the owner is not locked out (oracle against a blanket-deny bug).
 **Contract**: `beforeAll` creates users A and B; `afterEach` calls `resetFlashcards()`;
 `afterAll` deletes both users. For each case, seed a card owned by A, then act with B's
 cookie header:
+
 - `PATCH /api/flashcards/[id]` (import `PATCH` from `src/pages/api/flashcards/[id].ts`) with
   `{ status: "rejected" }` → `404`, body `{"error":"Flashcard not found"}`; A's row unchanged
   when re-read via service-role.
@@ -377,7 +379,7 @@ cookie header:
 **File**: `tests/integration/flashcards.rls.test.ts` (new)
 
 **Intent**: Give the RLS layer its own regression protection, independent of the route
-handlers. The handler tests in change #6 prove the *composite* outcome (cross-user access
+handlers. The handler tests in change #6 prove the _composite_ outcome (cross-user access
 denied) but cannot distinguish which layer enforced it — RLS alone returns 404/empty even
 if a handler's `.eq("user_id", user.id)` filter is removed. This group pins RLS directly,
 so disabling RLS on `flashcards` (or a future switch to a service-role client) fails a test
@@ -388,6 +390,7 @@ even while the app-level filter still stands.
 `createClient(SUPABASE_URL, SUPABASE_KEY, ...)` + `signInWithPassword`, anon key, no
 service role). Seed a card owned by A via service-role. Then, calling the DB directly
 (no route handler):
+
 - `supabaseB.from("flashcards").select("*").eq("id", aCardId)` → empty array, no error.
 - `supabaseB.from("flashcards").update({ front: "x" }).eq("id", aCardId).select()` → affects
   0 rows; A's row unchanged on service-role re-read.
@@ -450,6 +453,7 @@ any single handler's guard is caught.
 reset). For each of `GET /api/flashcards`, `POST /api/flashcards`,
 `PATCH /api/flashcards/[id]`, `DELETE /api/flashcards/[id]`,
 `POST /api/flashcards/[id]/review`, `GET /api/flashcards/due`:
+
 - **No `Cookie` header** → response status `401`, `Content-Type` JSON, body exactly
   `{"error":"Unauthorized"}`, and the response is **not** a redirect (`status` not in
   300–399, no `Location` header).
@@ -548,6 +552,26 @@ confirmation before the change is considered complete and handed to `/10x-archiv
 - **CI does not run the integration suite.** `test:integration` needs Docker + a running
   local Supabase, which `.github/workflows/ci.yml` does not provide. Wiring it in is
   test-plan §3 Phase 4, out of scope here.
+
+## Implementation Notes (approved deviations)
+
+Two Phase 2 mechanism changes, surfaced and approved during `/10x-implement`;
+intent (real local Supabase, real RLS, two real users) unchanged:
+
+1. **Env source.** The Phase 1 spike showed `astro:env/server` resolves its
+   values from `.dev.vars` at Vite-config load, not from `process.env` mutated
+   in a setup file. `.dev.vars` already targets the local stack, so the route
+   handlers hit local automatically. `tests/integration/setup.ts` reads the
+   URL/keys for the harness's own clients from `npx supabase status` at startup
+   (always matches the running stack) and asserts the handler-visible
+   `SUPABASE_URL` matches. A stale sweep of `test+cpc-*` users runs via the
+   integration project's `globalSetup` teardown (`tests/integration/global.ts`).
+2. **Seed / reset / re-read.** `supabase/migrations/20260903000000_create_flashcards.sql`
+   grants table privileges to `authenticated` only, so a service-role client
+   gets `permission denied` on `flashcards` via PostgREST. Seed/reset/re-read go
+   through each user's **session-scoped** client instead (RLS permits own-row
+   `insert`/`select`/`delete`). Service-role is used only for `auth.admin` user
+   management (`tests/integration/helpers/users.ts`).
 
 ## References
 
