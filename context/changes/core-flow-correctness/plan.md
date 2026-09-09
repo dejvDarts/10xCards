@@ -553,13 +553,13 @@ confirmation of the manual checks before the change is considered complete.
 
 #### Automated
 
-- [x] 3.1 `npm test` exits 0 with `flashcard-generation.test.ts` covering all 7 branches + happy path (≥ 8 tests)
-- [x] 3.2 `npm run test:integration` exits 0 with `flashcards.generate.test.ts` passing and Phase-1/Phase-2 suites unchanged
-- [x] 3.3 `npm run lint` and `npm run build` pass
-- [x] 3.4 `context/foundation/test-plan.md` §6.4 no longer contains "TBD" and §6.6 has a Phase 2 entry
+- [x] 3.1 `npm test` exits 0 with `flashcard-generation.test.ts` covering all 7 branches + happy path (≥ 8 tests) — b35b32c
+- [x] 3.2 `npm run test:integration` exits 0 with `flashcards.generate.test.ts` passing and Phase-1/Phase-2 suites unchanged — b35b32c
+- [x] 3.3 `npm run lint` and `npm run build` pass — b35b32c
+- [x] 3.4 `context/foundation/test-plan.md` §6.4 no longer contains "TBD" and §6.6 has a Phase 2 entry — b35b32c
 
 #### Manual
 
-- [x] 3.5 Empty `OPENROUTER_API_KEY` locally → `POST /api/flashcards/generate` returns 502 with the config message; restore
-- [x] 3.6 With a valid key, a real generation call still returns 201 with proposals
-- [x] 3.7 `npm test` then `npm run test:integration` back-to-back — no cross-file mock bleed
+- [x] 3.5 Empty `OPENROUTER_API_KEY` locally → `POST /api/flashcards/generate` returns 502 with the config message; restore — b35b32c
+- [x] 3.6 With a valid key, a real generation call still returns 201 with proposals — b35b32c
+- [x] 3.7 `npm test` then `npm run test:integration` back-to-back — no cross-file mock bleed — b35b32c
