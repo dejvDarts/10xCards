@@ -6,9 +6,11 @@ import type { Flashcard } from "@/types";
 // curve instead of ts-fsrs's default minute-scale learning steps — this is
 // what makes "no in-session requeue" true (see plan.md's Critical
 // Implementation Details / Definitions: in-session "Again" requeue).
-const scheduler = fsrs(generatorParameters({ enable_short_term: false }));
+// exported for unit tests (reviews.test.ts)
+export const scheduler = fsrs(generatorParameters({ enable_short_term: false }));
 
-function toFsrsCard(row: Flashcard): Card {
+// exported for unit tests (reviews.test.ts)
+export function toFsrsCard(row: Flashcard): Card {
   return {
     due: new Date(row.due),
     stability: row.stability,
@@ -26,7 +28,8 @@ function toFsrsCard(row: Flashcard): Card {
   };
 }
 
-function toRowUpdate(card: Card) {
+// exported for unit tests (reviews.test.ts)
+export function toRowUpdate(card: Card) {
   return {
     due: card.due.toISOString(),
     stability: card.stability,
