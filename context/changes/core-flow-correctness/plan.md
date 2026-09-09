@@ -538,28 +538,28 @@ confirmation of the manual checks before the change is considered complete.
 
 #### Automated
 
-- [x] 2.1 `npx supabase start` then `npm run test:integration` exits 0 with `flashcards.review.test.ts` all passing (the best-effort race case never fails the run)
-- [x] 2.2 `npm test` (unit) still exits 0 with no Docker, and the Phase-1 guard-contract unit test is present and passing
-- [x] 2.3 `npm run lint` passes over `tests/**`
-- [x] 2.4 Existing Phase-1 integration suites still pass unchanged
+- [x] 2.1 `npx supabase start` then `npm run test:integration` exits 0 with `flashcards.review.test.ts` all passing (the best-effort race case never fails the run) — 7817bb7
+- [x] 2.2 `npm test` (unit) still exits 0 with no Docker, and the Phase-1 guard-contract unit test is present and passing — 7817bb7
+- [x] 2.3 `npm run lint` passes over `tests/**` — 7817bb7
+- [x] 2.4 Existing Phase-1 integration suites still pass unchanged — 7817bb7
 
 #### Manual
 
-- [x] 2.5 Against the dev server: a card rated "Again" is absent from the next `GET /api/flashcards/due`
-- [x] 2.6 Removing `.eq("updated_at", …)` from `recordReview` makes the Phase-1 guard-contract unit test fail; reverting fixes it
-- [x] 2.7 Running `test:integration` twice leaves no leftover `test+cpc-*` users
+- [x] 2.5 Against the dev server: a card rated "Again" is absent from the next `GET /api/flashcards/due` — 7817bb7
+- [x] 2.6 Removing `.eq("updated_at", …)` from `recordReview` makes the Phase-1 guard-contract unit test fail; reverting fixes it — 7817bb7
+- [x] 2.7 Running `test:integration` twice leaves no leftover `test+cpc-*` users — 7817bb7
 
 ### Phase 3: Risk #3 — AI Generation Pipeline Coverage
 
 #### Automated
 
-- [ ] 3.1 `npm test` exits 0 with `flashcard-generation.test.ts` covering all 7 branches + happy path (≥ 8 tests)
-- [ ] 3.2 `npm run test:integration` exits 0 with `flashcards.generate.test.ts` passing and Phase-1/Phase-2 suites unchanged
-- [ ] 3.3 `npm run lint` and `npm run build` pass
-- [ ] 3.4 `context/foundation/test-plan.md` §6.4 no longer contains "TBD" and §6.6 has a Phase 2 entry
+- [x] 3.1 `npm test` exits 0 with `flashcard-generation.test.ts` covering all 7 branches + happy path (≥ 8 tests)
+- [x] 3.2 `npm run test:integration` exits 0 with `flashcards.generate.test.ts` passing and Phase-1/Phase-2 suites unchanged
+- [x] 3.3 `npm run lint` and `npm run build` pass
+- [x] 3.4 `context/foundation/test-plan.md` §6.4 no longer contains "TBD" and §6.6 has a Phase 2 entry
 
 #### Manual
 
-- [ ] 3.5 Empty `OPENROUTER_API_KEY` locally → `POST /api/flashcards/generate` returns 502 with the config message; restore
-- [ ] 3.6 With a valid key, a real generation call still returns 201 with proposals
-- [ ] 3.7 `npm test` then `npm run test:integration` back-to-back — no cross-file mock bleed
+- [x] 3.5 Empty `OPENROUTER_API_KEY` locally → `POST /api/flashcards/generate` returns 502 with the config message; restore
+- [x] 3.6 With a valid key, a real generation call still returns 201 with proposals
+- [x] 3.7 `npm test` then `npm run test:integration` back-to-back — no cross-file mock bleed

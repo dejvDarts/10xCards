@@ -224,7 +224,41 @@ Pattern shipped in rollout Phase 1 (archived at
 
 ### 6.4 Adding a test for the AI generation pipeline
 
-- TBD — see §3 Phase 2 for the provider-error/malformed-output pattern (Risk #3).
+Pattern shipped in rollout Phase 2 (`context/changes/core-flow-correctness/`),
+covering Risk #3.
+
+- **Where:** unit-test the service directly — `src/lib/services/<name>.test.ts`,
+  `unit` project, `npm test`. `generateFlashcardProposals` is a pure function
+  whose only side effect is one `fetch(OPENROUTER_URL, …)`, so DB-free unit tests
+  give full branch coverage.
+- **Mock the network edge only:** `vi.spyOn(globalThis, "fetch")` with
+  `afterEach(() => vi.restoreAllMocks())`. Per test:
+  `.mockResolvedValueOnce(new Response(body, { status }))` or
+  `.mockRejectedValueOnce(new TypeError("fetch failed"))`. No `msw` (one
+  hard-coded URL, one call site).
+- **Control `astro:env/server`** for the missing-key branch:
+  `const { mockEnv } = vi.hoisted(() => ({ mockEnv: { OPENROUTER_API_KEY:
+"test-key" as string | undefined, OPENROUTER_MODEL: "test/model" } }));
+vi.mock("astro:env/server", () => mockEnv);` then flip
+  `mockEnv.OPENROUTER_API_KEY = undefined` in the one test that needs it.
+- **Envelope shape:** the service expects
+  `{"choices":[{"message":{"content":"<JSON string>"}}]}` where the string parses
+  to `{"flashcards":[{"front":…,"back":…}]}` (1–15 items). One test per throw
+  path (missing key, unreachable, non-OK status, non-JSON body, missing/empty
+  content, content-not-JSON, wrong shape / empty / >15 / blank field), each
+  asserting the exact `FlashcardGenerationError` message; plus a happy path
+  asserting the parsed proposals and the `Authorization: Bearer …` header.
+- **No timeout test:** there is no `AbortController` / application-level deadline
+  in the generation path — a hung provider is bounded only by the Cloudflare
+  Workers platform CPU limit. Record that as a file comment, not a skipped test.
+- **Route smoke (integration):** one file hitting `POST /api/flashcards/generate`
+  for wiring only — happy → 201 with `status:"pending"` rows, mocked failure →
+  502 passthrough, bad input → 400, no session → 401. In the `integration`
+  project **do not** `vi.mock("astro:env/server")` (it nulls `SUPABASE_*` and
+  500s the DB insert). Mock `fetch` with a conditional implementation that
+  intercepts only `openrouter.ai` and passes Supabase auth (`getUser`) calls
+  through to the real local stack. `describe.skip` when `.dev.vars` has no
+  `OPENROUTER_API_KEY`.
 
 ### 6.5 Adding a test for a client-state hook (optimistic update)
 
@@ -255,6 +289,34 @@ Pattern shipped in rollout Phase 1 (archived at
   no independent regression test and is accepted as belt-and-braces.
 - **CI:** `test:integration` needs Docker + a running local Supabase and is
   **not** wired into `.github/workflows/ci.yml` — that is Phase 4.
+
+**Phase 2 — Core flow correctness (Risks #2, #3)** — in progress,
+`context/changes/core-flow-correctness/`.
+
+- **FSRS scheduling (Risk #2):** all scheduling lives in
+  `src/lib/services/reviews.ts`; `ts-fsrs@5.4.2` is deterministic for a fixed
+  `(card, now, rating)` (fuzz off by default). `toFsrsCard` / `toRowUpdate` /
+  `scheduler` were given `export` **for unit tests only** (visibility change, no
+  behavior change; annotated with `// exported for unit tests`). Diverges from
+  the private-internals sibling `flashcards.ts` — the comment marks intent.
+- **Oracle-safe assertions** (structurally enforced by ts-fsrs, parameter-
+  independent — safe across a `^5.4.2` minor bump): strict interval ordering
+  `Again < Hard < Good < Easy`, `reps += 1` per review, `state 0 → 2`,
+  `scheduled_days ≥ 1`, `due` strictly `> now`. **Never** assert an exact `due`,
+  `stability`, or `difficulty` (parameter-dependent — the oracle problem).
+- **`seedFlashcard` extension:** `tests/integration/helpers/db.ts`'s
+  `seedFlashcard` gained optional `due` / `state` / `reps` / `stability` / `id`
+  overrides (options object, additive — existing callers unaffected). Needed for
+  the due-list ordering-tie test (control two rows to an identical past `due`).
+- **Concurrency guard:** proven by a deterministic unit test that stubs the
+  injected `supabase` argument and models the `.eq("updated_at", …)` clause —
+  removing that clause from `recordReview` turns the "lost the race" test red.
+  The `Promise.all` two-review integration test is a best-effort supplement
+  (asserts a weaker invariant if the handlers don't interleave under Vitest).
+- **Generated rows are `status:"pending"`** (`generate.ts`), so a card created
+  via `/generate` is invisible to `getDueFlashcards` / `recordReview` (both
+  filter `status = 'accepted'`) until promoted — cross-flow tests must bridge
+  that seam explicitly. No such cross-flow test is in this phase.
 
 ## 7. What We Deliberately Don't Test
 
