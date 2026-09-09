@@ -1,7 +1,7 @@
 ---
 change_id: core-flow-correctness
 title: "Test rollout Phase 2: core-flow correctness (study loop + AI generation)"
-status: implemented
+status: impl_reviewed
 created: 2026-09-09
 updated: 2026-09-09
 archived_at: null
