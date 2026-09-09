@@ -524,30 +524,30 @@ confirmation of the manual checks before the change is considered complete.
 
 #### Automated
 
-- [x] 1.1 `npm test` exits 0 with `reviews.test.ts` reporting > 0 passing tests, including the optimistic-concurrency guard-contract test
-- [x] 1.2 `npm run lint` passes (new test file + the 3 `export` edits)
-- [x] 1.3 `npm run build` still passes
-- [x] 1.4 `npm test` succeeds with no Docker / `supabase` process running
+- [x] 1.1 `npm test` exits 0 with `reviews.test.ts` reporting > 0 passing tests, including the optimistic-concurrency guard-contract test — 2ea9fee
+- [x] 1.2 `npm run lint` passes (new test file + the 3 `export` edits) — 2ea9fee
+- [x] 1.3 `npm run build` still passes — 2ea9fee
+- [x] 1.4 `npm test` succeeds with no Docker / `supabase` process running — 2ea9fee
 
 #### Manual
 
-- [x] 1.5 Flipping `enable_short_term` to `true` fails exactly the guard test; reverting fixes it
-- [x] 1.6 Removing one `export` keyword breaks `reviews.test.ts`'s import, not the production build
+- [x] 1.5 Flipping `enable_short_term` to `true` fails exactly the guard test; reverting fixes it — 2ea9fee
+- [x] 1.6 Removing one `export` keyword breaks `reviews.test.ts`'s import, not the production build — 2ea9fee
 
 ### Phase 2: Risk #2 — Study-Loop Integration Coverage
 
 #### Automated
 
-- [ ] 2.1 `npx supabase start` then `npm run test:integration` exits 0 with `flashcards.review.test.ts` all passing (the best-effort race case never fails the run)
-- [ ] 2.2 `npm test` (unit) still exits 0 with no Docker, and the Phase-1 guard-contract unit test is present and passing
-- [ ] 2.3 `npm run lint` passes over `tests/**`
-- [ ] 2.4 Existing Phase-1 integration suites still pass unchanged
+- [x] 2.1 `npx supabase start` then `npm run test:integration` exits 0 with `flashcards.review.test.ts` all passing (the best-effort race case never fails the run)
+- [x] 2.2 `npm test` (unit) still exits 0 with no Docker, and the Phase-1 guard-contract unit test is present and passing
+- [x] 2.3 `npm run lint` passes over `tests/**`
+- [x] 2.4 Existing Phase-1 integration suites still pass unchanged
 
 #### Manual
 
-- [ ] 2.5 Against the dev server: a card rated "Again" is absent from the next `GET /api/flashcards/due`
-- [ ] 2.6 Removing `.eq("updated_at", …)` from `recordReview` makes the Phase-1 guard-contract unit test fail; reverting fixes it
-- [ ] 2.7 Running `test:integration` twice leaves no leftover `test+cpc-*` users
+- [x] 2.5 Against the dev server: a card rated "Again" is absent from the next `GET /api/flashcards/due`
+- [x] 2.6 Removing `.eq("updated_at", …)` from `recordReview` makes the Phase-1 guard-contract unit test fail; reverting fixes it
+- [x] 2.7 Running `test:integration` twice leaves no leftover `test+cpc-*` users
 
 ### Phase 3: Risk #3 — AI Generation Pipeline Coverage
 

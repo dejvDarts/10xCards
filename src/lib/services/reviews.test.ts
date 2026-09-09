@@ -157,12 +157,18 @@ describe("second review rated Again", () => {
 
 describe("recordReview optimistic-concurrency guard contract", () => {
   // Stub the injected `supabase` argument (dependency injection at the external
-  // boundary) — not a vi.mock of an internal module.
-  function stubSupabase(opts: { selectRow: Flashcard | null; updateRow: Flashcard | null }) {
+  // boundary) — not a vi.mock of an internal module. It models the guarded
+  // UPDATE: it matches a row iff the query filtered on `updated_at` AND that
+  // guard is still current (`guardMatches`), OR the `.eq("updated_at", …)` clause
+  // has been removed entirely (an unguarded UPDATE always matches). So deleting
+  // the guard clause from recordReview flips the "lost the race" test red.
+  function stubSupabase(opts: { selectRow: Flashcard | null; updatedRow?: Flashcard; guardMatches?: boolean }) {
     let isUpdate = false;
+    let sawUpdatedAtGuard = false;
     const chain: Record<string, unknown> = {
       from: () => {
         isUpdate = false;
+        sawUpdatedAtGuard = false;
         return chain;
       },
       select: () => chain,
@@ -170,28 +176,39 @@ describe("recordReview optimistic-concurrency guard contract", () => {
         isUpdate = true;
         return chain;
       },
-      eq: () => chain,
-      maybeSingle: () =>
-        Promise.resolve(isUpdate ? { data: opts.updateRow, error: null } : { data: opts.selectRow, error: null }),
+      eq: (column: string) => {
+        if (column === "updated_at") sawUpdatedAtGuard = true;
+        return chain;
+      },
+      maybeSingle: () => {
+        if (!isUpdate) return Promise.resolve({ data: opts.selectRow, error: null });
+        const matched = !sawUpdatedAtGuard || opts.guardMatches === true;
+        return Promise.resolve({ data: matched ? (opts.updatedRow ?? opts.selectRow) : null, error: null });
+      },
     };
     return chain as unknown as Parameters<typeof recordReview>[0];
   }
 
   it("returns null when the guarded update matches zero rows (lost the race)", async () => {
     const row = freshRow();
-    const result = await recordReview(stubSupabase({ selectRow: row, updateRow: null }), row.user_id, row.id, 3);
+    const result = await recordReview(stubSupabase({ selectRow: row, guardMatches: false }), row.user_id, row.id, 3);
     expect(result).toBeNull();
   });
 
   it("returns null when the row is not found / not owned / not accepted", async () => {
-    const result = await recordReview(stubSupabase({ selectRow: null, updateRow: null }), "someone", "missing", 3);
+    const result = await recordReview(stubSupabase({ selectRow: null }), "someone", "missing", 3);
     expect(result).toBeNull();
   });
 
   it("returns the updated row when the guarded update succeeds", async () => {
     const row = freshRow();
     const updated = freshRow({ reps: 1, state: 2, updated_at: "2026-01-01T00:00:01.000Z" });
-    const result = await recordReview(stubSupabase({ selectRow: row, updateRow: updated }), row.user_id, row.id, 3);
+    const result = await recordReview(
+      stubSupabase({ selectRow: row, updatedRow: updated, guardMatches: true }),
+      row.user_id,
+      row.id,
+      3,
+    );
     expect(result).toEqual(updated);
   });
 });
