@@ -82,6 +82,19 @@ const testConfig = tseslint.config({
   },
 });
 
+// Hook tests call `renderHook(() => useX())` — a hook invoked from an anonymous
+// arrow that is neither a component nor a `use*` function. That is exactly what
+// the React-hooks / react-compiler rules forbid in product code; it is the
+// correct, idiomatic shape for a hook test. Scoped to `*.test.tsx` only.
+const hookTestConfig = tseslint.config({
+  files: ["src/**/*.test.tsx"],
+  rules: {
+    "react-hooks/rules-of-hooks": "off",
+    "react-hooks/exhaustive-deps": "off",
+    "react-compiler/react-compiler": "off",
+  },
+});
+
 export default tseslint.config(
   includeIgnoreFile(gitignorePath),
   baseConfig,
@@ -90,5 +103,6 @@ export default tseslint.config(
   ...eslintPluginAstro.configs["flat/jsx-a11y-recommended"],
   astroConfig,
   testConfig,
+  hookTestConfig,
   eslintPluginPrettier,
 );
