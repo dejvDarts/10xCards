@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: [master]
 
+# A newer push to the same ref supersedes an in-flight run instead of queueing
+# behind it — matters once the Supabase-heavy test-integration job exists.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   ci:
     runs-on: ubuntu-latest
@@ -23,8 +29,23 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
 
+  # Docker-free Vitest projects: unit (src/**/*.test.ts) + components
+  # (src/**/*.test.tsx, happy-dom). No env, no secrets.
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx astro sync
+      - run: npm test
+      - run: npm run test:components
+
   deploy:
-    needs: ci
+    needs: [ci, test]
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
