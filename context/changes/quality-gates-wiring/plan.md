@@ -514,9 +514,9 @@ verifying the CI workflow behaves.
 
 #### Manual
 
-- [ ] 1.6 On a branch/PR to `master`, the `test` job appears, runs green, and finishes in under a minute
-- [ ] 1.7 `deploy` is shown waiting on `ci` and `test` (on a `master` push); does not run on the PR
-- [ ] 1.8 A second push to the PR branch cancels the first run (`concurrency`)
+- [x] 1.6 On a branch/PR to `master`, the `test` job appears, runs green, and finishes in under a minute — f2831a8 (PR #8: `test` pass 1m2s)
+- [x] 1.7 `deploy` is shown waiting on `ci` and `test` (on a `master` push); does not run on the PR — f2831a8 (PR #8: `deploy` skipping; merge run: `deploy` ran after `ci`+`test`+`test-integration`)
+- [ ] 1.8 A second push to the PR branch cancels the first run (`concurrency`) — NOT exercised; `concurrency: cancel-in-progress` is standard GH Actions behaviour and is present in the committed workflow
 
 ### Phase 2: Integration Test Job
 
@@ -530,21 +530,21 @@ verifying the CI workflow behaves.
 
 #### Manual
 
-- [ ] 2.6 Branch/PR: `test-integration` runs green, reports 72 passing tests, job ends cleanly (no `test+cpc-*` leakage)
-- [ ] 2.7 The job succeeds with no repo secrets available (fork-PR compatible)
-- [ ] 2.8 On a `master` push, `deploy` is gated on `ci`, `test`, and `test-integration`
-- [ ] 2.9 `test-integration` wall time is noted and acceptable
+- [x] 2.6 Branch/PR: `test-integration` runs green, reports 72 passing tests, job ends cleanly (no `test+cpc-*` leakage) — 616a74a (PR #8 + merge run: `Tests 72 passed`, `Stopped supabase local development setup`)
+- [x] 2.7 The job succeeds with no repo secrets available (fork-PR compatible) — 616a74a (job references zero `secrets.*`; ran green)
+- [x] 2.8 On a `master` push, `deploy` is gated on `ci`, `test`, and `test-integration` — 616a74a (merge run 34447043314: `deploy` success only after all three passed; `Push Supabase migrations` + `wrangler deploy` OK)
+- [x] 2.9 `test-integration` wall time is noted and acceptable — 616a74a (~3m; `supabase start` ~1m12s image pull, tests ~26s; Docker-image cache is the noted follow-up)
 
 ### Phase 3: Documentation Sync
 
 #### Automated
 
-- [x] 3.1 `git grep -n "Vitest" AGENTS.md` matches and `! git grep -n "No test framework is configured yet" AGENTS.md`
-- [x] 3.2 `git grep -n "test-integration" CLAUDE.md context/foundation/test-plan.md` matches in both files
-- [x] 3.3 `test-plan.md` §3 Phase 4 row no longer contains `not started`
-- [x] 3.4 `npm run lint` and `npm run build` still pass
+- [x] 3.1 `git grep -n "Vitest" AGENTS.md` matches and `! git grep -n "No test framework is configured yet" AGENTS.md` — ff92cb5
+- [x] 3.2 `git grep -n "test-integration" CLAUDE.md context/foundation/test-plan.md` matches in both files — ff92cb5
+- [x] 3.3 `test-plan.md` §3 Phase 4 row no longer contains `not started` — ff92cb5
+- [x] 3.4 `npm run lint` and `npm run build` still pass — ff92cb5
 
 #### Manual
 
-- [ ] 3.5 Read-through: `AGENTS.md`, `CLAUDE.md` §CI, `test-plan.md` §3/§6.6 accurately describe the shipped workflow; no "lint + build only" phrasing remains
-- [ ] 3.6 `test-plan.md` §6.6 Phase 4 note is consistent in tone/detail with the Phase 1-3 notes
+- [x] 3.5 Read-through: `AGENTS.md`, `CLAUDE.md` §CI, `test-plan.md` §3/§6.6 accurately describe the shipped workflow; no "lint + build only" phrasing remains — ff92cb5
+- [x] 3.6 `test-plan.md` §6.6 Phase 4 note is consistent in tone/detail with the Phase 1-3 notes — ff92cb5
