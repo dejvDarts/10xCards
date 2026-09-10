@@ -8,9 +8,11 @@ on:
 
 # A newer push to the same ref supersedes an in-flight run instead of queueing
 # behind it — matters once the Supabase-heavy test-integration job exists.
+# Only cancel PR runs; a push→master run owns `deploy` and must finish
+# (cancelling mid `supabase db push` / `wrangler deploy` is unsafe).
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   ci:
