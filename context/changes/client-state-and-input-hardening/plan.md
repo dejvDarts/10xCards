@@ -514,12 +514,12 @@ confirmation of the manual checks before the change is considered complete.
 
 #### Automated
 
-- [x] 2.1 `npx supabase start` then `npm run test:integration` exits 0 with `flashcards.input-validation.test.ts` all passing and every prior integration suite unchanged
-- [x] 2.2 `npm run test:components`, `npm test`, `npm run lint`, `npm run build` all pass
-- [x] 2.3 `context/foundation/test-plan.md` §6.5 no longer contains "TBD" and §6.6 has a "Phase 3" entry
+- [x] 2.1 `npx supabase start` then `npm run test:integration` exits 0 with `flashcards.input-validation.test.ts` all passing and every prior integration suite unchanged — 5a3839e
+- [x] 2.2 `npm run test:components`, `npm test`, `npm run lint`, `npm run build` all pass — 5a3839e
+- [x] 2.3 `context/foundation/test-plan.md` §6.5 no longer contains "TBD" and §6.6 has a "Phase 3" entry — 5a3839e
 
 #### Manual
 
-- [x] 2.4 Adding `.strict()` to the `generate` schema makes the pinned junk-key test fail; reverting fixes it
-- [x] 2.5 Running `test:integration` twice leaves no leftover `test+cpc-*` users
-- [x] 2.6 Deleting the malformed-id `!z.uuid()` check from `[id].ts` makes the malformed-id PATCH test fail
+- [x] 2.4 Adding `.strict()` to the `generate` schema makes the pinned junk-key test fail; reverting fixes it — 5a3839e
+- [x] 2.5 Running `test:integration` twice leaves no leftover `test+cpc-*` users — 5a3839e
+- [x] 2.6 Deleting the malformed-id `!z.uuid()` check from `[id].ts` makes the malformed-id PATCH test fail — 5a3839e
