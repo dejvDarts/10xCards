@@ -18,7 +18,7 @@ const urlOf = (input: RequestInfo | URL): string =>
 let fetchSpy: ReturnType<typeof vi.spyOn> | null = null;
 
 /** Intercept openrouter.ai with `handler`; pass every other request through. */
-export function mockProvider(handler: () => Promise<Response> | Response): ReturnType<typeof vi.spyOn> {
+export function mockProvider(handler: () => Promise<Response> | Response): void {
   // Capture the real fetch now, after asserting it hasn't already been spied by
   // another integration file that forgot to restore — otherwise the pass-through
   // below would silently route Supabase auth into a stale mock.
@@ -28,7 +28,6 @@ export function mockProvider(handler: () => Promise<Response> | Response): Retur
     if (urlOf(input).includes(OPENROUTER)) return Promise.resolve(handler());
     return realFetch(input, init);
   });
-  return fetchSpy;
 }
 
 /** Whether the provider (openrouter.ai) was hit since the last `mockProvider`. */

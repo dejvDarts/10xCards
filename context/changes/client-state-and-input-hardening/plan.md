@@ -523,3 +523,26 @@ confirmation of the manual checks before the change is considered complete.
 - [x] 2.4 Adding `.strict()` to the `generate` schema makes the pinned junk-key test fail; reverting fixes it — 5a3839e
 - [x] 2.5 Running `test:integration` twice leaves no leftover `test+cpc-*` users — 5a3839e
 - [x] 2.6 Deleting the malformed-id `!z.uuid()` check from `[id].ts` makes the malformed-id PATCH test fail — 5a3839e
+
+## Completion Notes
+
+### Phase 1 deviation — standalone `components` project + explicit `@vitejs/plugin-react` (48f6a0b)
+
+Change #1 / Change #2 and "Key Discoveries" said **not** to add `@vitejs/plugin-react`
+and to define the `components` project with `{ extends: true, ... }`. That did not work:
+`getViteConfig()` wires React for Astro's SSR island pipeline, which leaves `renderHook`
+with a null dispatcher ("invalid hook call — more than one copy of React"). `resolve.dedupe`,
+`test.server.deps.inline`, and adding `plugins: [react()]` on top of `extends: true` were
+all tried and all failed.
+
+**What shipped instead** (approved mid-Phase-1): the `components` project is **standalone**
+— no `extends: true` — with its own `plugins: [react()]`, `resolve.alias` for `@/`, and
+`dedupe: ["react", "react-dom"]`; `@vitejs/plugin-react@^5.2.0` is an explicit devDep. The
+hook test files never import `astro:*`, so they don't need `getViteConfig()`'s wiring. The
+"Do not add `@vitejs/plugin-react`" note in Key Discoveries is **superseded** by this.
+`context/foundation/test-plan.md` §6.5 / §6.6 describe the shipped design.
+
+### Phase 1 smoke outcome (Change #0)
+
+The `renderHook` + `act` harness smoke passed under **happy-dom**; the documented
+`jsdom` fallback was **not needed**. Smoke file was deleted before the Phase 1 commit.

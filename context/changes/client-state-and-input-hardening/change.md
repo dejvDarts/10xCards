@@ -1,7 +1,7 @@
 ---
 change_id: client-state-and-input-hardening
 title: "Test rollout Phase 3: client-state integrity + server-side input hardening"
-status: implemented
+status: impl_reviewed
 created: 2026-09-09
 updated: 2026-09-10
 archived_at: null
