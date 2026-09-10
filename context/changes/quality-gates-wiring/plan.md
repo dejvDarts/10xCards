@@ -514,9 +514,9 @@ verifying the CI workflow behaves.
 
 #### Manual
 
-- [x] 1.6 On a branch/PR to `master`, the `test` job appears, runs green, and finishes in under a minute — f2831a8 (PR #8: `test` pass 1m2s)
-- [x] 1.7 `deploy` is shown waiting on `ci` and `test` (on a `master` push); does not run on the PR — f2831a8 (PR #8: `deploy` skipping; merge run: `deploy` ran after `ci`+`test`+`test-integration`)
-- [ ] 1.8 A second push to the PR branch cancels the first run (`concurrency`) — NOT exercised; `concurrency: cancel-in-progress` is standard GH Actions behaviour and is present in the committed workflow
+- [x] 1.6 On a branch/PR to `master`, the `test` job appears, runs green, and finishes in under a minute (PR #8: `test` pass 1m2s) — f2831a8
+- [x] 1.7 `deploy` is shown waiting on `ci` and `test` (on a `master` push); does not run on the PR (PR #8: `deploy` skipping; merge run 34447043314: `deploy` ran after `ci`+`test`+`test-integration`) — f2831a8
+- [ ] 1.8 A second push to the PR branch cancels the first run (`concurrency`) — NOT exercised; `concurrency` is now gated to `pull_request` events (F1 fix, 7d70d64) and is standard GH Actions behaviour
 
 ### Phase 2: Integration Test Job
 
@@ -530,10 +530,10 @@ verifying the CI workflow behaves.
 
 #### Manual
 
-- [x] 2.6 Branch/PR: `test-integration` runs green, reports 72 passing tests, job ends cleanly (no `test+cpc-*` leakage) — 616a74a (PR #8 + merge run: `Tests 72 passed`, `Stopped supabase local development setup`)
-- [x] 2.7 The job succeeds with no repo secrets available (fork-PR compatible) — 616a74a (job references zero `secrets.*`; ran green)
-- [x] 2.8 On a `master` push, `deploy` is gated on `ci`, `test`, and `test-integration` — 616a74a (merge run 34447043314: `deploy` success only after all three passed; `Push Supabase migrations` + `wrangler deploy` OK)
-- [x] 2.9 `test-integration` wall time is noted and acceptable — 616a74a (~3m; `supabase start` ~1m12s image pull, tests ~26s; Docker-image cache is the noted follow-up)
+- [x] 2.6 Branch/PR: `test-integration` runs green, reports 72 passing tests, job ends cleanly (no `test+cpc-*` leakage) (PR #8 + merge runs: `Tests 72 passed`, `Stopped supabase local development setup`) — 616a74a
+- [x] 2.7 The job succeeds with no repo secrets available (fork-PR compatible) (job references zero `secrets.*`; ran green) — 616a74a
+- [x] 2.8 On a `master` push, `deploy` is gated on `ci`, `test`, and `test-integration` (merge run 34447043314: `deploy` success only after all three; `Push Supabase migrations` + `wrangler deploy` OK) — 616a74a
+- [x] 2.9 `test-integration` wall time is noted and acceptable (~3m; `supabase start` ~1m12s image pull, tests ~26s; Docker-image cache is the noted follow-up) — 616a74a
 
 ### Phase 3: Documentation Sync
 
