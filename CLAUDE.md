@@ -10,6 +10,9 @@ This file provides guidance to AI Agent when working with code in this repositor
 - `npm run lint` — ESLint with type-checked rules
 - `npm run lint:fix` — auto-fix lint issues
 - `npm run format` — Prettier (includes prettier-plugin-astro + prettier-plugin-tailwindcss)
+- `npm test` — Vitest `unit` project (fast, no Docker)
+- `npm run test:components` — Vitest `components` project (React hook tests, happy-dom)
+- `npm run test:integration` — Vitest `integration` project (needs `npx supabase start`)
 
 Pre-commit hooks: husky + lint-staged runs `eslint --fix` on `*.{ts,tsx,astro}` and `prettier --write` on `*.{json,css,md}`.
 
@@ -51,4 +54,10 @@ Full server-side rendering (`output: "server"` in astro.config.mjs). All pages a
 
 ## CI
 
-GitHub Actions workflow (`.github/workflows/ci.yml`) runs lint + build on every push and PR to master. Requires `SUPABASE_URL` and `SUPABASE_KEY` repository secrets for the build step.
+GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push and PR to master:
+
+- `ci` — lint + build. Requires `SUPABASE_URL` and `SUPABASE_KEY` repository secrets for the build step.
+- `test` — Vitest `unit` + `components` projects (Docker-free, no secrets).
+- `test-integration` — Vitest `integration` project against a local Supabase started with `npx supabase start`. Uses the well-known static local keys and a dummy `OPENROUTER_API_KEY`, so it needs no repository secrets (and runs on fork PRs).
+
+`deploy` runs only after `ci`, `test`, and `test-integration` all pass.

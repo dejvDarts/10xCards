@@ -90,8 +90,8 @@ orchestrator updates Status as artifacts appear on disk.
 | --- | ------------------------------ | -------------------------------------------------------------------------- | ------------- | ----------------------- | ----------- | ------------------------------------------------------------ |
 | 1   | Critical-path coverage         | Bootstrap the test runner and defend the two access-control risks first    | #1, #4        | unit + integration      | complete    | `context/archive/2026-09-09-testing-critical-path-coverage/` |
 | 2   | Core flow correctness          | Defend the two must-have flows: the study loop and AI generation           | #2, #3        | unit + integration      | complete    | `context/archive/2026-09-09-core-flow-correctness/`          |
-| 3   | Client-state & input hardening | Defend UI-state integrity after mutations and server-side input validation | #5, #6        | integration + component | not started | —                                                            |
-| 4   | Quality-gates wiring           | Add the test suite to CI alongside the existing lint + build gates         | cross-cutting | gates                   | not started | —                                                            |
+| 3   | Client-state & input hardening | Defend UI-state integrity after mutations and server-side input validation | #5, #6        | integration + component | complete    | `context/archive/2026-09-09-client-state-and-input-hardening/` |
+| 4   | Quality-gates wiring           | Add the test suite to CI alongside the existing lint + build gates         | cross-cutting | gates                   | complete    | `context/changes/quality-gates-wiring/`                     |
 
 **Status vocabulary** (fixed — parser literals): `not started` →
 `change opened` → `researched` → `planned` → `implementing` → `complete`.
@@ -368,8 +368,8 @@ covering Risk #5.
   filter `status = 'accepted'`) until promoted — cross-flow tests must bridge
   that seam explicitly. No such cross-flow test is in this phase.
 
-**Phase 3 — Client-state & input hardening (Risks #5, #6)** — in progress,
-`context/changes/client-state-and-input-hardening/`.
+**Phase 3 — Client-state & input hardening (Risks #5, #6)** — complete, archived
+2026-09-09 at `context/archive/2026-09-09-client-state-and-input-hardening/`.
 
 - **`components` Vitest project:** a third project alongside `unit` /
   `integration`, standalone (not `extends: true`), `happy-dom` env, glob
@@ -406,6 +406,36 @@ covering Risk #5.
   `tests/integration/helpers/mock-provider.ts` (was file-local in
   `flashcards.generate.test.ts`) so the generate boundary-pass cells in the
   input-validation sweep reuse the conditional-`fetch` interceptor.
+
+**Phase 4 — Quality-gates wiring (cross-cutting)** — complete,
+`context/changes/quality-gates-wiring/`.
+
+- **Two new CI jobs** in `.github/workflows/ci.yml`, both triggered on push/PR
+  to `master` and parallel with the existing `ci` (lint + build) job:
+  - `test` — `npm test` (`unit`) + `npm run test:components` (`components`).
+    Docker-free, no env, no secrets.
+  - `test-integration` — `npx supabase start`, then `npm run test:integration`
+    (`integration`). Serial (`fileParallelism: false`); ~1-4 min cold-start for
+    the stack + ~20-30 s for 72 tests.
+- **`deploy` now `needs: [ci, test, test-integration]`** — unverified code
+  cannot reach `master`/production. Workflow-level `concurrency:
+  cancel-in-progress` supersedes in-flight runs on a new push.
+- **No repo secrets for the test jobs.** `test-integration` derives
+  `SUPABASE_URL` + `SUPABASE_KEY` from `npx supabase status -o env` at runtime
+  (mirroring the harness's `PUBLISHABLE_KEY ?? ANON_KEY`), because
+  `applyLocalEnv()` sets `SUPABASE_URL` but not `SUPABASE_KEY` and a bare runner
+  would 500 every route. Local anon/service-role keys are the well-known static
+  values — never a GitHub or Workers secret. `OPENROUTER_API_KEY: ci-dummy`
+  un-skips the 13 provider-mocked generate tests (`mockProvider` always
+  intercepts `openrouter.ai`). Both consequences: the jobs also run on fork PRs.
+- **`deploy` job untouched** apart from its `needs:` line — the
+  `supabase db push --project-ref "$REF" --yes` step and `SUPABASE_ACCESS_TOKEN`
+  secret (see `context/foundation/lessons.md`) are byte-for-byte unchanged.
+- **Not adopted:** `@cloudflare/vitest-pool-workers` / the workerd runtime —
+  that is an environment migration, a separate future change, not a gate.
+- **Docker-image caching / `supabase start -x <services>` trim** — noted as a
+  follow-up optimisation if cold-start time proves painful; correctness does not
+  depend on it.
 
 ## 7. What We Deliberately Don't Test
 

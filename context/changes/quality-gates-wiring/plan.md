@@ -522,11 +522,11 @@ verifying the CI workflow behaves.
 
 #### Automated
 
-- [x] 2.1 `.github/workflows/ci.yml` still parses as valid YAML; `test-integration` has `runs-on` + `steps`
-- [x] 2.2 Local repro: with a local stack up, `eval "$(npx supabase status -o env)"` yields non-empty `API_URL` / `ANON_KEY`
-- [x] 2.3 Locally, exporting `SUPABASE_URL` + `SUPABASE_KEY` from `supabase status` and `OPENROUTER_API_KEY=ci-dummy`, `npm run test:integration` exits 0 with 72 passed, 0 skipped
-- [x] 2.4 `git grep -n "needs: \[ci, test, test-integration\]" .github/workflows/ci.yml` matches the `deploy` job
-- [x] 2.5 `git diff` on the `deploy` job shows only the `needs:` line changed (the `supabase db push` step + `SUPABASE_ACCESS_TOKEN` untouched)
+- [x] 2.1 `.github/workflows/ci.yml` still parses as valid YAML; `test-integration` has `runs-on` + `steps` — 616a74a
+- [x] 2.2 Local repro: with a local stack up, `eval "$(npx supabase status -o env)"` yields non-empty `API_URL` / `ANON_KEY` — 616a74a
+- [x] 2.3 Locally, exporting `SUPABASE_URL` + `SUPABASE_KEY` from `supabase status` and `OPENROUTER_API_KEY=ci-dummy`, `npm run test:integration` exits 0 with 72 passed, 0 skipped — 616a74a
+- [x] 2.4 `git grep -n "needs: \[ci, test, test-integration\]" .github/workflows/ci.yml` matches the `deploy` job — 616a74a
+- [x] 2.5 `git diff` on the `deploy` job shows only the `needs:` line changed (the `supabase db push` step + `SUPABASE_ACCESS_TOKEN` untouched) — 616a74a
 
 #### Manual
 
@@ -539,10 +539,10 @@ verifying the CI workflow behaves.
 
 #### Automated
 
-- [ ] 3.1 `git grep -n "Vitest" AGENTS.md` matches and `! git grep -n "No test framework is configured yet" AGENTS.md`
-- [ ] 3.2 `git grep -n "test-integration" CLAUDE.md context/foundation/test-plan.md` matches in both files
-- [ ] 3.3 `test-plan.md` §3 Phase 4 row no longer contains `not started`
-- [ ] 3.4 `npm run lint` and `npm run build` still pass
+- [x] 3.1 `git grep -n "Vitest" AGENTS.md` matches and `! git grep -n "No test framework is configured yet" AGENTS.md`
+- [x] 3.2 `git grep -n "test-integration" CLAUDE.md context/foundation/test-plan.md` matches in both files
+- [x] 3.3 `test-plan.md` §3 Phase 4 row no longer contains `not started`
+- [x] 3.4 `npm run lint` and `npm run build` still pass
 
 #### Manual
 

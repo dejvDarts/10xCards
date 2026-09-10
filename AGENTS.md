@@ -28,6 +28,6 @@
 
 ## Testing, commits & CI
 
-- No test framework is configured yet; if you add one, wire it into CI before relying on it.
-- CI (`@.github/workflows/ci.yml`) runs `npm ci` → `astro sync` → lint → build on push/PR to `master`, and needs `SUPABASE_URL`/`SUPABASE_KEY` repository secrets. Keep both green before merge.
+- Vitest is configured with three projects: `unit` (`src/**/*.test.ts`, `npm test`), `components` (`src/**/*.test.tsx`, happy-dom, `npm run test:components`), and `integration` (`tests/integration/**`, needs `npx supabase start`, `npm run test:integration`). CI runs all three — keep them green before merge.
+- CI (`@.github/workflows/ci.yml`) on push/PR to `master`: a `ci` job (`npm ci` → `astro sync` → lint → build; needs `SUPABASE_URL`/`SUPABASE_KEY` repo secrets), a `test` job (unit + components; no secrets), and a `test-integration` job (boots a local Supabase via `npx supabase start`; uses the well-known static local keys, no repo secrets). `deploy` needs all three.
 - Commit convention is not yet established — the repo has no history; agree a prefix style (e.g. Conventional Commits) before the first batch of commits.
