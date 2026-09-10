@@ -22,11 +22,12 @@ const envelope = (content: string) => JSON.stringify({ choices: [{ message: { co
 const jsonResponse = (body: string, status = 200) =>
   new Response(body, { status, headers: { "Content-Type": "application/json" } });
 
-let fetchSpy: ReturnType<typeof vi.spyOn>;
+const spyOnFetch = () => vi.spyOn(globalThis, "fetch");
+let fetchSpy: ReturnType<typeof spyOnFetch>;
 
 beforeEach(() => {
   mockEnv.OPENROUTER_API_KEY = "test-key";
-  fetchSpy = vi.spyOn(globalThis, "fetch");
+  fetchSpy = spyOnFetch();
 });
 
 afterEach(() => {

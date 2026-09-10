@@ -1,0 +1,29 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/lint-file.sh\"",
+            "timeout": 120,
+            "statusMessage": "ESLint on edited file"
+          },
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/typecheck.sh\"",
+            "timeout": 120,
+            "statusMessage": "tsc --noEmit"
+          },
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/related-tests.sh\"",
+            "timeout": 180,
+            "statusMessage": "vitest related (edited file)"
+          }
+        ]
+      }
+    ]
+  }
+}
