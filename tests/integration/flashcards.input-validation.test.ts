@@ -42,7 +42,7 @@ async function rowCount(): Promise<number> {
 
 async function ownRows<T extends Record<string, unknown> = Record<string, unknown>>(cols = "*"): Promise<T[]> {
   const { data } = await client.from("flashcards").select(cols).eq("user_id", user.id);
-  return (data ?? []) as T[];
+  return (data ?? []) as unknown as T[];
 }
 
 /** Route call with a raw (unstringified) request body — the only way to feed a

@@ -1,1 +1,13 @@
+set -e
+
+# Lint + format staged files, then run the tests related to staged TS/TSX
+# (Docker-free projects). Configured in package.json "lint-staged".
 npx lint-staged
+
+# Whole-project type check when any TS/Astro file is staged -- tsc has no
+# reliable single-file mode. This is the durable typecheck gate; the per-edit
+# .claude/hooks/typecheck.sh is just fast local feedback.
+if git diff --cached --name-only --diff-filter=ACMR | grep -qE '\.(ts|tsx|astro)$'; then
+  echo "pre-commit: tsc --noEmit"
+  npx tsc --noEmit
+fi

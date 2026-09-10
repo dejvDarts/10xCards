@@ -15,7 +15,8 @@ const OPENROUTER = "openrouter.ai";
 const urlOf = (input: RequestInfo | URL): string =>
   typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
 
-let fetchSpy: ReturnType<typeof vi.spyOn> | null = null;
+const spyOnFetch = () => vi.spyOn(globalThis, "fetch");
+let fetchSpy: ReturnType<typeof spyOnFetch> | null = null;
 
 /** Intercept openrouter.ai with `handler`; pass every other request through. */
 export function mockProvider(handler: () => Promise<Response> | Response): void {
@@ -24,7 +25,7 @@ export function mockProvider(handler: () => Promise<Response> | Response): void 
   // below would silently route Supabase auth into a stale mock.
   expect(vi.isMockFunction(globalThis.fetch), "globalThis.fetch already mocked before this suite").toBe(false);
   const realFetch = globalThis.fetch.bind(globalThis);
-  fetchSpy = vi.spyOn(globalThis, "fetch").mockImplementation((input, init) => {
+  fetchSpy = spyOnFetch().mockImplementation((input, init) => {
     if (urlOf(input).includes(OPENROUTER)) return Promise.resolve(handler());
     return realFetch(input, init);
   });
@@ -32,5 +33,5 @@ export function mockProvider(handler: () => Promise<Response> | Response): void 
 
 /** Whether the provider (openrouter.ai) was hit since the last `mockProvider`. */
 export function providerCalled(): boolean {
-  return fetchSpy?.mock.calls.some(([input]) => urlOf(input as RequestInfo | URL).includes(OPENROUTER)) ?? false;
+  return fetchSpy?.mock.calls.some(([input]) => urlOf(input).includes(OPENROUTER)) ?? false;
 }

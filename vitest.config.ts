@@ -34,6 +34,8 @@ export default getViteConfig({
           setupFiles: ["tests/integration/setup.ts"],
           globalSetup: ["tests/integration/global.ts"],
           // Integration tests share a single local DB — run files serially.
+          // @ts-expect-error — valid at runtime in vitest 3.2 project config; the
+          // ProjectConfig type omits `fileParallelism` (fixed in vitest 4).
           fileParallelism: false,
         },
       },

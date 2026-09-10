@@ -10,6 +10,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
+    "typecheck": "tsc --noEmit",
+    "prepare": "husky",
     "test": "vitest run --project unit",
     "test:watch": "vitest --project unit",
     "test:integration": "vitest run --project integration",
@@ -70,7 +72,11 @@
     "vite": "^7.3.2"
   },
   "lint-staged": {
-    "*.{ts,tsx,astro}": [
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "vitest related --run --project unit --project components"
+    ],
+    "*.astro": [
       "eslint --fix"
     ],
     "*.{json,css,md}": [
