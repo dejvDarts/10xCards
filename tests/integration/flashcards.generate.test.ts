@@ -5,19 +5,16 @@ import { POST as generateRoute } from "@/pages/api/flashcards/generate";
 import { createTestUser, deleteTestUser, signedInClient, type TestUser } from "./helpers/users";
 import { apiContext, cookieHeaderFor } from "./helpers/session";
 import { resetFlashcards } from "./helpers/db";
+import { mockProvider, providerCalled } from "./helpers/mock-provider";
 
-// The handler makes TWO kinds of outbound calls: Supabase auth (getUser) and
-// the OpenRouter provider. We mock ONLY the network edge that matters —
-// openrouter.ai — and let everything else hit the real local Supabase. Mocking
-// astro:env/server is avoided on purpose (it would null SUPABASE_* and break the
-// real DB insert). Relies on .dev.vars carrying OPENROUTER_API_KEY.
+// The generate handler makes TWO kinds of outbound calls: Supabase auth
+// (getUser) and the OpenRouter provider. `mockProvider` (see
+// ./helpers/mock-provider) intercepts ONLY openrouter.ai and lets everything
+// else hit the real local Supabase. Relies on .dev.vars carrying
+// OPENROUTER_API_KEY.
 const suite = OPENROUTER_API_KEY ? describe : describe.skip;
 
 const SOURCE = "x".repeat(200);
-const OPENROUTER = "openrouter.ai";
-
-const urlOf = (input: RequestInfo | URL): string =>
-  typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
 
 const envelope = (content: string) => JSON.stringify({ choices: [{ message: { content } }] });
 const proposalsResponse = (n: number) =>
@@ -33,23 +30,6 @@ const proposalsResponse = (n: number) =>
 let user: TestUser;
 let client: SupabaseClient;
 let cookie: string;
-let fetchSpy: ReturnType<typeof vi.spyOn>;
-
-/** Intercept openrouter.ai with `handler`; pass every other request through. */
-function mockProvider(handler: () => Promise<Response> | Response) {
-  // Capture the real fetch now, after asserting it hasn't already been spied by
-  // another integration file that forgot to restore — otherwise the pass-through
-  // below would silently route Supabase auth into a stale mock.
-  expect(vi.isMockFunction(globalThis.fetch), "globalThis.fetch already mocked before this suite").toBe(false);
-  const realFetch = globalThis.fetch.bind(globalThis);
-  fetchSpy = vi.spyOn(globalThis, "fetch").mockImplementation((input, init) => {
-    if (urlOf(input).includes(OPENROUTER)) return Promise.resolve(handler());
-    return realFetch(input, init);
-  });
-}
-
-const providerCalled = () =>
-  fetchSpy.mock.calls.some(([input]) => urlOf(input as RequestInfo | URL).includes(OPENROUTER));
 
 beforeAll(async () => {
   user = await createTestUser();

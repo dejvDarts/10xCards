@@ -262,7 +262,57 @@ vi.mock("astro:env/server", () => mockEnv);` then flip
 
 ### 6.5 Adding a test for a client-state hook (optimistic update)
 
-- TBD — see §3 Phase 3 for the rollback-on-failure pattern (Risk #5).
+Pattern shipped in rollout Phase 3 (`context/changes/client-state-and-input-hardening/`),
+covering Risk #5.
+
+- **Where:** co-locate as `src/components/hooks/<name>.test.tsx` (note the
+  `.tsx`). The `components` Vitest project globs `src/**/*.test.tsx`, runs under
+  `happy-dom`, and is invoked with `npm run test:components`. No Docker, no DB —
+  `fetch` is the only seam. `npm test` (the `unit` project) globs `*.test.ts`
+  and never loads these, so the fast loop stays DOM-free.
+- **Config:** the `components` project is **standalone** — it does _not_
+  `extends: true`. `getViteConfig()` wires React for Astro's SSR island
+  pipeline, which leaves `renderHook` with a null dispatcher ("invalid hook
+  call"). The project carries its own `plugins: [react()]`
+  (`@vitejs/plugin-react`, an explicit devDep), a `resolve.alias` for `@/`, and
+  `dedupe: ["react", "react-dom"]`. Hook files only need the alias — they never
+  import `astro:*`.
+- **Lint:** `eslint.config.js` has a `src/**/*.test.tsx` override turning off
+  `react-hooks/rules-of-hooks`, `react-hooks/exhaustive-deps`, and
+  `react-compiler/react-compiler` — `renderHook(() => useThing(x))` calls a hook
+  from an anonymous arrow that is neither a component nor a `use*` function.
+- **Drive the hook:** `renderHook(() => useThing(initialData))` from
+  `@testing-library/react`; every state-mutating call goes through
+  `await act(async () => { await result.current.<fn>(...) })`. Assert on
+  `result.current.*` _after_ the `act` resolves — the rollback hooks
+  (`editFlashcard`, `deleteFlashcard`, `updateFlashcard`, `submitRating`) catch
+  their own errors and do not rethrow. The one exception is
+  `useFlashcardList.createFlashcard`, which **rethrows**: wrap it as
+  `await expect(result.current.createFlashcard(...)).rejects.toThrow()` inside
+  the `act` callback.
+- **Inject failure at `fetch`:** `vi.spyOn(globalThis, "fetch")` per test,
+  `afterEach(() => vi.restoreAllMocks())`. Either
+  `.mockResolvedValue(new Response(JSON.stringify({ error: "Boom" }), { status: 500 }))`
+  or `.mockRejectedValue(new TypeError("network down"))` — both reach the same
+  `catch`. happy-dom supplies `location` (`http://localhost/`) so the hooks'
+  relative-URL `fetch` calls resolve before the spy sees them.
+- **Assert the rollback contract, not the wording:** the optimistic mutation is
+  undone (list length / order / counters back to their pre-call values), the
+  hook's `error` field is truthy, and the per-row "mutating" flag
+  (`mutatingCardIds` / `updatingCardId`) is cleared.
+- **Seeding a hook with no `initialData`:** `useFlashcardProposals` is populated
+  by a mocked-success `generate("<100+ chars>")` whose `fetch` resolves a
+  `GenerateFlashcardsResponse` (`{ flashcards: [...] }` — the route's response
+  shape, **not** the OpenRouter `{ choices: [...] }` envelope), then the mock is
+  swapped to a failure before exercising the rollback path.
+- **A branch that needs a real network round-trip:** the `deleteFlashcard`
+  success-pagination case (delete the last row of page > 1 → navigate back a
+  page) only fires if React flushes the optimistic `setFlashcards` before the
+  DELETE resolves. Stage it: kick the delete off in a _synchronous_ `act`
+  (`act(() => { pending = result.current.deleteFlashcard(only); })`), then
+  `await act(async () => { await pending; })`, and give the DELETE mock a
+  `setTimeout(0)` macrotask delay. An instant mock resolves before the flush and
+  the navigation never happens.
 
 ### 6.6 Per-rollout-phase notes
 
@@ -290,8 +340,8 @@ vi.mock("astro:env/server", () => mockEnv);` then flip
 - **CI:** `test:integration` needs Docker + a running local Supabase and is
   **not** wired into `.github/workflows/ci.yml` — that is Phase 4.
 
-**Phase 2 — Core flow correctness (Risks #2, #3)** — in progress,
-`context/changes/core-flow-correctness/`.
+**Phase 2 — Core flow correctness (Risks #2, #3)** — complete, archived
+2026-09-09 at `context/archive/2026-09-09-core-flow-correctness/`.
 
 - **FSRS scheduling (Risk #2):** all scheduling lives in
   `src/lib/services/reviews.ts`; `ts-fsrs@5.4.2` is deterministic for a fixed
@@ -317,6 +367,45 @@ vi.mock("astro:env/server", () => mockEnv);` then flip
   via `/generate` is invisible to `getDueFlashcards` / `recordReview` (both
   filter `status = 'accepted'`) until promoted — cross-flow tests must bridge
   that seam explicitly. No such cross-flow test is in this phase.
+
+**Phase 3 — Client-state & input hardening (Risks #5, #6)** — in progress,
+`context/changes/client-state-and-input-hardening/`.
+
+- **`components` Vitest project:** a third project alongside `unit` /
+  `integration`, standalone (not `extends: true`), `happy-dom` env, glob
+  `src/**/*.test.tsx`, script `test:components`. It carries its own
+  `@vitejs/plugin-react` + `@/` alias + React dedupe because `getViteConfig()`'s
+  Astro-SSR React wiring gives `renderHook` a null dispatcher. Devtime-only
+  deps: `@testing-library/react`, `@testing-library/dom`, `happy-dom`,
+  `@vitejs/plugin-react`. **Not** wired into CI — that is Phase 4.
+- **Risk #5 scope is hook-only** (`renderHook`, no component render). Three
+  component-level UI-buffer behaviours are **accepted as untested**: the edit
+  form's local draft state, the delete-confirmation dialog gate, and the
+  proposal list's in-place accept/reject buffering. They are thin wrappers over
+  the hook contracts that _are_ covered; a render-test layer for them is not
+  worth the happy-dom surface area at this stage.
+- **Risk #6 sweep asserts behaviour, never zod wording:** each adversarial
+  payload check is `status` (400, or the pinned 200/201) + an `error` property
+  on the body + a `rowCount` / re-read proving nothing was persisted or mutated.
+  The single allowed message-string assertion is the create over-max boundary
+  (`/at most 1,?000/`). One representative payload per validation cell-class per
+  write route, plus the universal cells (non-JSON body, malformed `[id]`).
+- **Three pinned schema gaps** — asserted as _current behaviour_, each with an
+  inline `// PINNED:` comment, not endorsed:
+  1. `PATCH /api/flashcards/[id]` has no `.max` on `front` / `back` (create caps
+     both at 1,000) — a 5,000-char `front` is accepted with 200.
+  2. `POST /api/flashcards/generate` schema is a bare `z.object` with no
+     `.strict()` — unknown keys pass silently (201).
+  3. That same schema has no `.trim()` — a 150-space `sourceText` validates and
+     is stored verbatim (201).
+     **Follow-up:** tighten these three schemas (add `.max` to PATCH, `.strict()` +
+     `.trim()` to generate) in a production-code change; the pinned tests flip to
+     the new contract at that point. Not done here — a coverage phase ships no
+     production behaviour change.
+- **Shared provider mock:** `mockProvider` / `providerCalled` moved to
+  `tests/integration/helpers/mock-provider.ts` (was file-local in
+  `flashcards.generate.test.ts`) so the generate boundary-pass cells in the
+  input-validation sweep reuse the conditional-`fetch` interceptor.
 
 ## 7. What We Deliberately Don't Test
 

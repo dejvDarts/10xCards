@@ -498,28 +498,28 @@ confirmation of the manual checks before the change is considered complete.
 
 #### Automated
 
-- [x] 1.1 The harness smoke (Change #0) passes and the smoke file is deleted before Phase 1 completes
-- [x] 1.2 `npm run test:components` exits 0 with > 0 passing tests across the three hook files
-- [x] 1.3 `npm test` (unit) still exits 0 and still needs no Docker (no `.test.tsx` loaded)
-- [x] 1.4 `npm run lint` passes (new `.test.tsx` files + `vitest.config.ts` + `eslint.config.js` edits)
-- [x] 1.5 `npm run build` still passes
+- [x] 1.1 The harness smoke (Change #0) passes and the smoke file is deleted before Phase 1 completes — 48f6a0b
+- [x] 1.2 `npm run test:components` exits 0 with > 0 passing tests across the three hook files — 48f6a0b
+- [x] 1.3 `npm test` (unit) still exits 0 and still needs no Docker (no `.test.tsx` loaded) — 48f6a0b
+- [x] 1.4 `npm run lint` passes (new `.test.tsx` files + `vitest.config.ts` + `eslint.config.js` edits) — 48f6a0b
+- [x] 1.5 `npm run build` still passes — 48f6a0b
 
 #### Manual
 
-- [x] 1.6 Removing the `catch` restore in `useFlashcardList.editFlashcard` makes the edit-rollback test fail; reverting fixes it
-- [x] 1.7 `npx vitest --project components` watch mode picks up the three `.test.tsx` files
-- [x] 1.8 `npm test` output shows only the `unit` project (no `happy-dom` env)
+- [x] 1.6 Removing the `catch` restore in `useFlashcardList.editFlashcard` makes the edit-rollback test fail; reverting fixes it — 48f6a0b
+- [x] 1.7 `npx vitest --project components` watch mode picks up the three `.test.tsx` files — 48f6a0b
+- [x] 1.8 `npm test` output shows only the `unit` project (no `happy-dom` env) — 48f6a0b
 
 ### Phase 2: Risk #6 Adversarial Input Sweep + Cookbook
 
 #### Automated
 
-- [ ] 2.1 `npx supabase start` then `npm run test:integration` exits 0 with `flashcards.input-validation.test.ts` all passing and every prior integration suite unchanged
-- [ ] 2.2 `npm run test:components`, `npm test`, `npm run lint`, `npm run build` all pass
-- [ ] 2.3 `context/foundation/test-plan.md` §6.5 no longer contains "TBD" and §6.6 has a "Phase 3" entry
+- [x] 2.1 `npx supabase start` then `npm run test:integration` exits 0 with `flashcards.input-validation.test.ts` all passing and every prior integration suite unchanged
+- [x] 2.2 `npm run test:components`, `npm test`, `npm run lint`, `npm run build` all pass
+- [x] 2.3 `context/foundation/test-plan.md` §6.5 no longer contains "TBD" and §6.6 has a "Phase 3" entry
 
 #### Manual
 
-- [ ] 2.4 Adding `.strict()` to the `generate` schema makes the pinned junk-key test fail; reverting fixes it
-- [ ] 2.5 Running `test:integration` twice leaves no leftover `test+cpc-*` users
-- [ ] 2.6 Deleting the malformed-id `!z.uuid()` check from `[id].ts` makes the malformed-id PATCH test fail
+- [x] 2.4 Adding `.strict()` to the `generate` schema makes the pinned junk-key test fail; reverting fixes it
+- [x] 2.5 Running `test:integration` twice leaves no leftover `test+cpc-*` users
+- [x] 2.6 Deleting the malformed-id `!z.uuid()` check from `[id].ts` makes the malformed-id PATCH test fail
