@@ -10,11 +10,31 @@ This file provides guidance to AI Agent when working with code in this repositor
 - `npm run lint` — ESLint with type-checked rules
 - `npm run lint:fix` — auto-fix lint issues
 - `npm run format` — Prettier (includes prettier-plugin-astro + prettier-plugin-tailwindcss)
+- `npm run typecheck` — `tsc --noEmit` (run `npx astro sync` first if `astro:*` types are stale)
 - `npm test` — Vitest `unit` project (fast, no Docker)
 - `npm run test:components` — Vitest `components` project (React hook tests, happy-dom)
 - `npm run test:integration` — Vitest `integration` project (needs `npx supabase start`)
 
-Pre-commit hooks: husky + lint-staged runs `eslint --fix` on `*.{ts,tsx,astro}` and `prettier --write` on `*.{json,css,md}`.
+## Automated checks
+
+Three layers, cheapest first.
+
+### Per-edit agent hooks
+
+`.claude/settings.json` → `.claude/hooks/*.sh`, `PostToolUse` on `Write|Edit`. Each parses the edited file path from the hook stdin JSON with `node` (no `jq` in the Windows shell) and exits **2** on failure so the error is fed back to the agent.
+
+- **`lint-file.sh`** — `eslint --fix` on the edited file only (`.ts/.tsx/.astro/.js/.jsx/.mjs/.cjs`).
+- **`typecheck.sh`** — project-wide `tsc --noEmit` when a `.ts/.tsx/.astro` file changed. If it feels slow, delete its block from `.claude/settings.json`; pre-commit + CI still typecheck.
+- **`related-tests.sh`** — `vitest related <file> --run` scoped to the edited file: `unit` + `components` always, plus the `integration` project when the file is under `src/pages/api/**` or is `src/middleware.ts` (Risk #1 / #4 in `context/foundation/test-plan.md`) **and** local Supabase answers a health check. Exports `AI_AGENT=1` (no-op until Vitest ≥ 4.1).
+
+### Pre-commit
+
+husky + lint-staged. Run `npm install` once so the `prepare` script wires `core.hooksPath`.
+
+- lint-staged: `*.{ts,tsx}` → `eslint --fix` + `vitest related --run` (`unit`, `components`); `*.astro` → `eslint --fix`; `*.{json,css,md}` → `prettier --write`
+- then project-wide `tsc --noEmit` when any `.ts/.tsx/.astro` file is staged
+
+`.prettierignore` keeps the `@przeprogramowani/10x-cli`-generated files (`.github/.10x-cli-manifest.json`, `.github/copilot-instructions.md`) byte-identical to the tool output.
 
 ## Architecture
 
@@ -56,7 +76,7 @@ Full server-side rendering (`output: "server"` in astro.config.mjs). All pages a
 
 GitHub Actions workflow (`.github/workflows/ci.yml`) runs on every push and PR to master:
 
-- `ci` — lint + build. Requires `SUPABASE_URL` and `SUPABASE_KEY` repository secrets for the build step.
+- `ci` — `typecheck` + lint + build. Requires `SUPABASE_URL` and `SUPABASE_KEY` repository secrets for the build step.
 - `test` — Vitest `unit` + `components` projects (Docker-free, no secrets).
 - `test-integration` — Vitest `integration` project against a local Supabase started with `npx supabase start`. Uses the well-known static local keys and a dummy `OPENROUTER_API_KEY`, so it needs no repository secrets (and runs on fork PRs).
 
