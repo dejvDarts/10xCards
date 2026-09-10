@@ -506,11 +506,11 @@ verifying the CI workflow behaves.
 
 #### Automated
 
-- [x] 1.1 `.github/workflows/ci.yml` is valid YAML and every job has `runs-on` + `steps`
-- [x] 1.2 `npm test` exits 0 locally (43 unit tests)
-- [x] 1.3 `npm run test:components` exits 0 locally (6 component tests)
-- [x] 1.4 `npm run lint` and `npm run build` still pass locally
-- [x] 1.5 `git grep -n "needs: \[ci, test\]" .github/workflows/ci.yml` matches the `deploy` job
+- [x] 1.1 `.github/workflows/ci.yml` is valid YAML and every job has `runs-on` + `steps` — f2831a8
+- [x] 1.2 `npm test` exits 0 locally (43 unit tests) — f2831a8
+- [x] 1.3 `npm run test:components` exits 0 locally (6 component tests) — f2831a8
+- [x] 1.4 `npm run lint` and `npm run build` still pass locally — f2831a8
+- [x] 1.5 `git grep -n "needs: \[ci, test\]" .github/workflows/ci.yml` matches the `deploy` job — f2831a8
 
 #### Manual
 
@@ -522,11 +522,11 @@ verifying the CI workflow behaves.
 
 #### Automated
 
-- [ ] 2.1 `.github/workflows/ci.yml` still parses as valid YAML; `test-integration` has `runs-on` + `steps`
-- [ ] 2.2 Local repro: with a local stack up, `eval "$(npx supabase status -o env)"` yields non-empty `API_URL` / `ANON_KEY`
-- [ ] 2.3 Locally, exporting `SUPABASE_URL` + `SUPABASE_KEY` from `supabase status` and `OPENROUTER_API_KEY=ci-dummy`, `npm run test:integration` exits 0 with 72 passed, 0 skipped
-- [ ] 2.4 `git grep -n "needs: \[ci, test, test-integration\]" .github/workflows/ci.yml` matches the `deploy` job
-- [ ] 2.5 `git diff` on the `deploy` job shows only the `needs:` line changed (the `supabase db push` step + `SUPABASE_ACCESS_TOKEN` untouched)
+- [x] 2.1 `.github/workflows/ci.yml` still parses as valid YAML; `test-integration` has `runs-on` + `steps`
+- [x] 2.2 Local repro: with a local stack up, `eval "$(npx supabase status -o env)"` yields non-empty `API_URL` / `ANON_KEY`
+- [x] 2.3 Locally, exporting `SUPABASE_URL` + `SUPABASE_KEY` from `supabase status` and `OPENROUTER_API_KEY=ci-dummy`, `npm run test:integration` exits 0 with 72 passed, 0 skipped
+- [x] 2.4 `git grep -n "needs: \[ci, test, test-integration\]" .github/workflows/ci.yml` matches the `deploy` job
+- [x] 2.5 `git diff` on the `deploy` job shows only the `needs:` line changed (the `supabase db push` step + `SUPABASE_ACCESS_TOKEN` untouched)
 
 #### Manual
 

@@ -44,8 +44,42 @@ jobs:
       - run: npm test
       - run: npm run test:components
 
+  # Integration project (tests/integration/**) against a real local Supabase.
+  # No repo secrets: the local stack's anon key + URL are well-known static
+  # values, and the OpenRouter provider is always mocked (any non-empty
+  # OPENROUTER_API_KEY un-skips the 13 provider-mocked generate tests).
+  test-integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx astro sync
+      - name: Start local Supabase
+        run: npx supabase start
+      - name: Export local Supabase env for the route handlers
+        # applyLocalEnv() in the harness sets SUPABASE_URL but not SUPABASE_KEY;
+        # without SUPABASE_KEY every route handler returns 500. Mirror the
+        # harness's PUBLISHABLE_KEY ?? ANON_KEY preference (local-env.ts).
+        run: |
+          eval "$(npx supabase status -o env)"
+          {
+            echo "SUPABASE_URL=$API_URL"
+            echo "SUPABASE_KEY=${PUBLISHABLE_KEY:-$ANON_KEY}"
+          } >> "$GITHUB_ENV"
+      - name: Run integration tests
+        run: npm run test:integration
+        env:
+          OPENROUTER_API_KEY: ci-dummy
+      - name: Stop local Supabase
+        if: always()
+        run: npx supabase stop
+
   deploy:
-    needs: [ci, test]
+    needs: [ci, test, test-integration]
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
