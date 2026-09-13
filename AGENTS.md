@@ -26,6 +26,17 @@
 - Merge Tailwind classes with `cn()` from `@/lib/utils` (clsx + tailwind-merge) — do not concatenate class strings. Add shadcn/ui components via `npx shadcn@latest add <name>` (new-york variant).
 - husky + lint-staged run `eslint --fix` on `*.{ts,tsx,astro}` and `prettier --write` on `*.{json,css,md}` pre-commit.
 
+## E2E testing (Playwright)
+
+- `tests/e2e/` (`playwright.config.ts`, `npm run test:e2e`, or `npx playwright test <file>` for a single spec). Auto-starts `npm run dev` as `webServer`; needs local Supabase running (`npx supabase start`).
+- One test per browser-level risk from `context/foundation/test-plan.md` — e2e is expensive/flake-prone, reserved for journeys that cross auth + routing + API + DB, or exist only in the rendered UI. Not a coverage sweep.
+- Locators: `getByRole`/`getByLabel`/`getByText` only — never CSS selectors, XPath, or test-ids (none exist in this codebase).
+- No `page.waitForTimeout()` — wait on `expect(...).toBeVisible()`/`toHaveURL()`.
+- Each test is independently runnable: unique test data via `createTestUser()` (`tests/integration/helpers/users.ts`), cleanup in `afterEach` (`deleteTestUser` — cascades any seeded rows via FK `on delete cascade`, no separate DB cleanup needed for flashcards).
+- **Sign in through the real `/auth/signin` UI form in every test** — deliberate for this project: no `storageState`/auth-setup project exists yet (see `playwright.config.ts`), so this deviates from the generic Playwright best practice on purpose.
+- Mock only expensive/non-deterministic **external** boundaries, at the network layer (`page.route`) — internal boundaries (auth, routing, DB) stay real. Known limitation: `page.route` only intercepts requests made _from the browser_; an API route's own server-side outbound call (e.g. the OpenRouter fetch inside `generate.ts`) is invisible to it — don't force a mock past that boundary.
+- Name the test after the risk it protects, not `test('test 1', ...)`. The assertion must fail if that risk materializes — if it wouldn't, it's decorative.
+
 ## Testing, commits & CI
 
 - Vitest is configured with three projects: `unit` (`src/**/*.test.ts`, `npm test`), `components` (`src/**/*.test.tsx`, happy-dom, `npm run test:components`), and `integration` (`tests/integration/**`, needs `npx supabase start`, `npm run test:integration`). CI runs all three — keep them green before merge.
