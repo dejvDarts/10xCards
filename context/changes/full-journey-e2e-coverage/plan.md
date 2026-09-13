@@ -135,10 +135,10 @@ None — no schema or data changes.
 
 #### Automated
 
-- [x] 1.1 New spec passes: `npx playwright test tests/e2e/full-journey.spec.ts`
-- [x] 1.2 Full e2e suite still passes: `npm run test:e2e`
+- [x] 1.1 New spec passes: `npx playwright test tests/e2e/full-journey.spec.ts` — 287a1ea
+- [x] 1.2 Full e2e suite still passes: `npm run test:e2e` — 287a1ea
 
 #### Manual
 
-- [x] 1.3 Deliberate-break check on `getDueFlashcards`'s status filter confirms the spec fails, then the break is reverted
-- [x] 1.4 Headed run visually confirmed against real local dev server + local Supabase
+- [x] 1.3 Deliberate-break check on `getDueFlashcards`'s status filter confirms the spec fails, then the break is reverted — 287a1ea
+- [x] 1.4 Headed run visually confirmed against real local dev server + local Supabase — 287a1ea
