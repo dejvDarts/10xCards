@@ -56,13 +56,37 @@ test.describe("full generate → accept → study journey (test-plan.md Risk #7)
     baseURL,
   }) => {
     // Mock only the AI-generation network call; every step from Accept
-    // onward hits the real route, real DB, and real SSR, unmocked.
+    // onward hits the real route, real DB, and real SSR, unmocked. The
+    // body mirrors the real Flashcard shape generate.ts returns, so a
+    // future UI change reading a field beyond front/back/id/status still
+    // gets a realistic response here.
+    const now = new Date().toISOString();
     await page.route("**/api/flashcards/generate", async (route) => {
       await route.fulfill({
         status: 201,
         contentType: "application/json",
         body: JSON.stringify({
-          flashcards: [{ id: proposalId, user_id: user.id, front, back, status: "pending" }],
+          flashcards: [
+            {
+              id: proposalId,
+              user_id: user.id,
+              front,
+              back,
+              source_text: "x".repeat(150),
+              status: "pending",
+              created_at: now,
+              updated_at: now,
+              due: now,
+              stability: 0,
+              difficulty: 0,
+              scheduled_days: 0,
+              learning_steps: 0,
+              reps: 0,
+              lapses: 0,
+              state: 0,
+              last_review: null,
+            },
+          ],
         }),
       });
     });
@@ -71,7 +95,10 @@ test.describe("full generate → accept → study journey (test-plan.md Risk #7)
     // that risk) -- inject a real session cookie instead of driving the
     // /auth/signin form. /generate, /flashcards, and /flashcards/review are
     // all PROTECTED_ROUTES.
-    await signInViaCookie(context, user, baseURL ?? "http://localhost:4321");
+    if (!baseURL) {
+      throw new Error("playwright.config.ts must set use.baseURL for signInViaCookie");
+    }
+    await signInViaCookie(context, user, baseURL);
 
     // Generate: paste source text, submit, accept the (mocked) proposal.
     await page.goto("/generate");
