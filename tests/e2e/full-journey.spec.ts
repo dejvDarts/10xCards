@@ -27,8 +27,8 @@ import { seedFlashcard } from "../integration/helpers/db";
 test.describe("full generate → accept → study journey (test-plan.md Risk #7)", () => {
   let user: TestUser;
   let proposalId: string;
-  const front = `Full-journey front ${randomUUID()}`;
-  const back = `Full-journey back ${randomUUID()}`;
+  let front: string;
+  let back: string;
 
   test.beforeAll(() => {
     applyLocalEnv(readLocalStatus());
@@ -37,6 +37,8 @@ test.describe("full generate → accept → study journey (test-plan.md Risk #7)
   test.beforeEach(async () => {
     user = await createTestUser();
     proposalId = randomUUID();
+    front = `Full-journey front ${randomUUID()}`;
+    back = `Full-journey back ${randomUUID()}`;
     const ownerClient = await signedInClient(user);
     await seedFlashcard(ownerClient, user.id, { id: proposalId, front, back, status: "pending" });
   });
