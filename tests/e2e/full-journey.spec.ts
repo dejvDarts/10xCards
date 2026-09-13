@@ -62,6 +62,10 @@ test.describe("full generate → accept → study journey (test-plan.md Risk #7)
     // gets a realistic response here.
     const now = new Date().toISOString();
     await page.route("**/api/flashcards/generate", async (route) => {
+      if (route.request().method() !== "POST") {
+        await route.continue();
+        return;
+      }
       await route.fulfill({
         status: 201,
         contentType: "application/json",

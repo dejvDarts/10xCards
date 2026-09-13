@@ -39,7 +39,7 @@ A new, passing `tests/e2e/full-journey.spec.ts` that fails if the `pending → a
 - Not adding an explicit assertion that a `pending`/`rejected` sibling card is excluded from the due list in this test — that already follows from `getDueFlashcards`'s existing `status = 'accepted'` filter and is left to existing/future integration coverage, not this E2E budget.
 - Not adding an explicit hard `page.reload()` check — four separate full-page SSR navigations (`/generate` → `/flashcards` → `/flashcards/review`) already prove state survives real page loads; a bare reload adds cost without a new claim.
 - Not building test infrastructure to stub the real OpenRouter/AI-provider boundary — that limitation is already documented (`test-plan.md §6.3`) and out of scope; this test only proves the promotion seam, not AI-failure handling (Risk #3, separately resolved in this project as "no test for now").
-- Not adding a `storageState`/auth-setup Playwright project — this spec signs in through the real UI each run, like `seed.spec.ts`.
+- Not adding a `storageState`/auth-setup Playwright project — auth is per-test via `signInViaCookie` (`tests/e2e/helpers/auth.ts`), not a shared Playwright project; see `test-plan.md` §6.3 for why this replaced the originally-planned real-UI sign-in.
 - Not writing the cheaper chained-handler integration test test-plan.md's Risk #7 guidance also suggests — that remains a candidate for a future, separate change if the team wants belt-and-braces backend-only coverage; this plan is scoped to the E2E layer only.
 
 ## Implementation Approach
@@ -72,8 +72,8 @@ Add the single new spec file proving Risk #7, following `tests/e2e/seed.spec.ts`
 - `test.beforeAll`: `applyLocalEnv(readLocalStatus())`.
 - `test.beforeEach`: `user = await createTestUser()`; obtain `ownerClient = await signedInClient(user)`; choose a `proposalId` (`crypto.randomUUID()`); seed a `status: "pending"` row via `seedFlashcard(ownerClient, user.id, { id: proposalId, front, back })` with fixed, test-owned `front`/`back` text.
 - `test.afterEach`: `await deleteTestUser(user.id)` (cascades the seeded flashcard row — no separate cleanup call).
-- Inside the test: register `page.route("**/api/flashcards/generate", ...)` to fulfill the `POST` with `{ flashcards: [{ id: proposalId, front, back, user_id: user.id, status: "pending" }] }` (status 201) — registered before any navigation.
-- Sign in through the real `/auth/signin` form (same sequence as `seed.spec.ts:52-58`), then:
+- Inside the test: register `page.route("**/api/flashcards/generate", ...)` to fulfill the `POST` with the full `Flashcard` shape (`id, user_id, front, back, source_text, status, created_at, updated_at, due, stability, difficulty, scheduled_days, learning_steps, reps, lapses, state, last_review`, status 201) — registered before any navigation. (Superseded from an initial 5-field body during code review, to keep the mock realistic against the real endpoint's response shape.)
+- Sign in via `signInViaCookie(context, user, baseURL)` (`tests/e2e/helpers/auth.ts`) — injects a real `@supabase/ssr` session cookie, skipping the `/auth/signin` UI round trip. (Superseded from an initial real-UI sign-in, same sequence as `seed.spec.ts:52-58`; this test isn't exercising the login flow itself, so `test-plan.md` §6.3 made cookie injection the default for that case.) Then:
   1. Navigate to `/generate`, fill "Source text" with ≥100 characters, click "Generate flashcards" — assert the mocked proposal's front text is visible.
   2. Click "Accept" on that proposal — this fires the real (unmocked) `PATCH /api/flashcards/{proposalId}`.
   3. Click the Topbar "Flashcards" link — assert URL `/flashcards`, "1 saved" (or the count text), and the accepted card's front text visible.
@@ -126,6 +126,7 @@ None — no schema or data changes.
 - Related research: `context/changes/full-journey-e2e-coverage/research.md`
 - Similar implementation: `tests/e2e/seed.spec.ts`
 - Risk definition: `context/foundation/test-plan.md` §2 Risk #7, §3 Phase 5
+- Added during implementation (not originally planned): `tests/e2e/helpers/auth.ts` (`signInViaCookie`) — see impl-review F1/F2
 
 ## Progress
 

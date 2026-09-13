@@ -1,7 +1,7 @@
 ---
 change_id: full-journey-e2e-coverage
 title: E2E coverage for the full generate → accept → study-session journey
-status: implemented
+status: impl_reviewed
 created: 2026-09-13
 updated: 2026-09-13
 archived_at: null
