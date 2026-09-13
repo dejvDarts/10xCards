@@ -3,6 +3,7 @@ import { test, expect } from "@playwright/test";
 import { applyLocalEnv, readLocalStatus } from "../integration/helpers/local-env";
 import { createTestUser, deleteTestUser, signedInClient, type TestUser } from "../integration/helpers/users";
 import { seedFlashcard } from "../integration/helpers/db";
+import { signInViaCookie } from "./helpers/auth";
 
 /**
  * Full generate -> accept -> study journey (test-plan.md Risk #7,
@@ -49,7 +50,11 @@ test.describe("full generate → accept → study journey (test-plan.md Risk #7)
     await deleteTestUser(user.id);
   });
 
-  test("an accepted proposal is immediately visible and ratable in a study session", async ({ page }) => {
+  test("an accepted proposal is immediately visible and ratable in a study session", async ({
+    page,
+    context,
+    baseURL,
+  }) => {
     // Mock only the AI-generation network call; every step from Accept
     // onward hits the real route, real DB, and real SSR, unmocked.
     await page.route("**/api/flashcards/generate", async (route) => {
@@ -62,13 +67,11 @@ test.describe("full generate → accept → study journey (test-plan.md Risk #7)
       });
     });
 
-    // Sign in through the real UI (seed.spec.ts convention) -- /generate,
-    // /flashcards, and /flashcards/review are all PROTECTED_ROUTES.
-    await page.goto("/auth/signin");
-    await page.getByRole("textbox", { name: "Email" }).fill(user.email);
-    await page.getByLabel("Password", { exact: true }).fill(user.password);
-    await page.getByRole("button", { name: "Sign in" }).click();
-    await expect(page).toHaveURL(/\/$/);
+    // This test isn't exercising the login flow itself (seed.spec.ts owns
+    // that risk) -- inject a real session cookie instead of driving the
+    // /auth/signin form. /generate, /flashcards, and /flashcards/review are
+    // all PROTECTED_ROUTES.
+    await signInViaCookie(context, user, baseURL ?? "http://localhost:4321");
 
     // Generate: paste source text, submit, accept the (mocked) proposal.
     await page.goto("/generate");
