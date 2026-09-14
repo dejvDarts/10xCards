@@ -1,15 +1,18 @@
-import { applyLocalEnv, readLocalStatus } from "./helpers/local-env";
+import { applyLocalEnv, readLocalStatus, readStatusCache } from "./helpers/local-env";
 
 // Integration tests run against a real local Supabase (`npx supabase start`).
-// Keys are read from `supabase status` at startup so the harness always matches
-// whatever local stack is running.
+// Keys are read from `supabase status` once by the integration project's
+// `globalSetup` (global.ts) and cached; each file reads that cache here
+// instead of shelling out to the CLI itself, which avoids concurrent `npx
+// supabase status` calls racing each other. Falls back to a direct call if
+// the cache is somehow missing.
 //
 // The route handlers under test get their own SUPABASE_URL / SUPABASE_KEY from
 // `astro:env/server`, resolved from `.dev.vars` at Vite-config load. The env
 // vars set here are for the harness's own supabase-js clients (admin +
 // per-user sessions).
 
-const status = readLocalStatus();
+const status = readStatusCache() ?? readLocalStatus();
 applyLocalEnv(status);
 
 // The route handlers read SUPABASE_URL from `astro:env/server` (resolved from
